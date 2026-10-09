@@ -6,6 +6,23 @@ Interactive visual roadmaps for developers, hackers and the endlessly curious. I
 
 🌐 **Live:** https://mizazhaider-ceh.github.io/pentrix-atlas/
 
+## Version history
+- **v15** — Final polish: shortcut docs, version history
+- **v14** — Path spotlight: hovering a node lights its full path to the root
+- **v13** — Zoom command center: live %, slider, reset, double-click zoom
+- **v12** — Extreme modern theme: spotlight cards, mesh hero, button shine
+- **v11** — Readable minimum zoom (0.7)
+- **v10** — roadmap.sh-style diagram (bigger nodes, colored edges, boxed legend)
+- **v9** — Fixed invisible overlays swallowing clicks
+- **v8** — Fixed stale service worker
+- **v7** — Click fix + premium theme
+- **v6** — PWA, command palette, shortcuts, opinion badges, SEO
+- **v5** — Community voting, share cards, helpful votes
+- **v4** — Gamification: XP, levels, streaks, achievements, dashboard
+- **v3** — 3 new roadmaps, learn/practice depth per node
+- **v2** — Aurora theme, next-node glow, minimap
+- **v1** — Custom SVG engine, 6 roadmaps, drawer, progress
+
 ## ✨ What it does
 
 - **Visual roadmap graphs** — custom SVG engine: tidy tree layout, curved edges, pan and zoom
