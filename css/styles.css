@@ -563,3 +563,38 @@ body::before{
 .edge{transition:opacity .25s,stroke .25s,filter .25s}
 .edge.dim{opacity:.07}
 .edge.hl{opacity:1;stroke-width:3.5;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--rc) 70%,transparent))}
+
+/* ================= v16: motion ================= */
+/* springy node entrances */
+@keyframes nodeIn{from{opacity:0;transform:translateY(18px) scale(.88)}60%{opacity:1;transform:translateY(-3px) scale(1.02)}to{opacity:1;transform:none}}
+.anode{animation:nodeIn .55s cubic-bezier(.2,.9,.3,1.15) backwards}
+/* press micro-interactions */
+.anode:active{transform:scale(.93)}
+.map-ctrl button:active,.vote:active,.hbtn:active{transform:scale(.88)}
+.btn-done:active{transform:scale(.97)}
+/* page transitions */
+.page-enter{animation:pageIn .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* hero reveal */
+.hero .eyebrow{animation:pageIn .6s .05s backwards}
+.hero h1{animation:pageIn .6s .12s backwards}
+.hero .lede{animation:pageIn .6s .2s backwards}
+.hero .searchbar{animation:pageIn .6s .28s backwards}
+.hero .hstats{animation:pageIn .6s .36s backwards}
+/* drawer content */
+.drawer.open .dr-in{animation:drSlide .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes drSlide{from{transform:translateX(40px);opacity:.6}to{transform:none;opacity:1}}
+/* cards entrance */
+.rm-card{animation:pageIn .5s backwards}
+.rm-grid .rm-card:nth-child(2){animation-delay:.06s}
+.rm-grid .rm-card:nth-child(3){animation-delay:.12s}
+.rm-grid .rm-card:nth-child(4){animation-delay:.18s}
+.rm-grid .rm-card:nth-child(5){animation-delay:.24s}
+.rm-grid .rm-card:nth-child(6){animation-delay:.3s}
+.rm-grid .rm-card:nth-child(n+7){animation-delay:.36s}
+/* toasts pop */
+.toast{transition:.35s cubic-bezier(.2,.9,.3,1.25)}
+/* respect users who prefer less motion */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
+}

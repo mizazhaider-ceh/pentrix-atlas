@@ -137,6 +137,20 @@ const Engine = (() => {
       }
     });
 
+    // v16: edges draw themselves in, staggered
+    edges.forEach((e, i) => {
+      if (e.el.classList.contains("opt")) return;
+      try {
+        const len = e.el.getTotalLength();
+        e.el.style.strokeDasharray = String(len);
+        e.el.style.strokeDashoffset = String(len);
+        e.el.getBoundingClientRect();
+        e.el.style.transition = "stroke-dashoffset .8s ease " + (0.25 + i * 0.035) + "s";
+        e.el.style.strokeDashoffset = "0";
+        setTimeout(() => { e.el.style.strokeDasharray = ""; e.el.style.transition = ""; }, 900 + i * 35);
+      } catch (_) {}
+    });
+
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     return { nodes, edges, W, H, vp, byId: Object.fromEntries(nodes.map(n => [n._id, n])) };
   }

@@ -61,6 +61,17 @@
   }
 
   // ---------- router ----------
+  function countUp(el, to, dur) {
+    dur = dur || 900;
+    const t0 = performance.now();
+    function f(t) {
+      const p = Math.min(1, (t - t0) / dur);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(f);
+    }
+    requestAnimationFrame(f);
+  }
+
   function route() {
     updateLvlChip();
     const h = location.hash || "#/";
@@ -68,11 +79,11 @@
     closeDrawer();
     if (m) {
       const rm = ROADMAPS.find(r => r.id === m[1]);
-      if (rm) return viewRoadmap(rm);
+      if (rm) { viewRoadmap(rm); animIn(); return; }
     }
-    if (h === "#/dashboard") return viewDashboard();
-    if (h === "#/community") return viewCommunity();
-    viewHome();
+    if (h === "#/dashboard") { viewDashboard(); animIn(); countUps(); return; }
+    if (h === "#/community") { viewCommunity(); animIn(); return; }
+    viewHome(); animIn();
   }
 
   // ---------- home ----------
@@ -741,6 +752,35 @@
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("sw.js").catch(() => {});
       });
+    }
+  }
+
+  function animIn() {
+    const a = $("app");
+    if (a && a.firstElementChild) {
+      a.firstElementChild.classList.remove("page-enter");
+      void a.firstElementChild.offsetWidth;
+      a.firstElementChild.classList.add("page-enter");
+    }
+  }
+
+  function countUps() {
+    document.querySelectorAll(".dstat b, .lvl-badge b, .dash-streak b").forEach(b => {
+      const v = parseInt(b.textContent, 10);
+      if (!isNaN(v) && String(v) === b.textContent.trim()) countUp(b, v);
+    });
+    const xp = document.querySelector(".xp-t");
+    if (xp) {
+      const m = xp.textContent.match(/^(\d+) XP/);
+      if (m) {
+        const to = +m[1];
+        const t0 = performance.now();
+        (function f(t) {
+          const p = Math.min(1, (t - t0) / 900);
+          xp.innerHTML = Math.round(to * (1 - Math.pow(1 - p, 3))) + " XP " + "<span>" + xp.querySelector("span").textContent + "</span>";
+          if (p < 1) requestAnimationFrame(f);
+        })(t0);
+      }
     }
   }
 
