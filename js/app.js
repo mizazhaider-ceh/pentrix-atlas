@@ -71,6 +71,7 @@
       if (rm) return viewRoadmap(rm);
     }
     if (h === "#/dashboard") return viewDashboard();
+    if (h === "#/community") return viewCommunity();
     viewHome();
   }
 
@@ -242,7 +243,8 @@
       <div class="dr-pane" id="paneDo" hidden>
         ${todo ? `<ol class="dl-do">${todo}</ol>` : '<p class="muted">Hands-on steps coming soon.</p>'}
       </div>
-      <div class="dr-pane" id="paneRes" hidden>${res || '<p class="muted">No links yet.</p>'}</div>`;
+      <div class="dr-pane" id="paneRes" hidden>${res || '<p class="muted">No links yet.</p>'}</div>
+      ${helpfulHtml(rm.id, nid)}`;
     $("drawer").hidden = false;
     requestAnimationFrame(() => $("drawer").classList.add("open"));
     $("drX").addEventListener("click", closeDrawer);
@@ -281,6 +283,7 @@
       });
     }));
     document.querySelectorAll(".kid").forEach(b => b.addEventListener("click", () => openDrawer(rm, b.dataset.nid)));
+    wireHelpful(rm.id, nid);
   }
 
   function refreshRoadmapProgress(rm) {
@@ -297,6 +300,212 @@
     if (!d || d.hidden) return;
     d.classList.remove("open");
     setTimeout(() => { d.hidden = true; }, 280);
+  }
+
+  // ================= COMMUNITY: voting board =================
+  const VLS = "atlas.votes.v1";
+  const SEED_SUGGESTIONS = [
+    { id:"s-ai", t:"AI & Machine Learning", d:"From Python math to neural networks and LLMs." },
+    { id:"s-rust", t:"Rust Programming", d:"Memory safety without garbage collection." },
+    { id:"s-mobile", t:"Mobile Development", d:"Flutter and native apps for iOS and Android." },
+    { id:"s-game", t:"Game Development", d:"Godot and Unity: build playable worlds." },
+    { id:"s-data", t:"Data Science", d:"Statistics, pandas, and telling stories with data." },
+    { id:"s-soc", t:"SOC Analyst", d:"Blue team fundamentals: SIEM, triage, threat hunting." },
+  ];
+  function getVotes() {
+    try {
+      const v = JSON.parse(localStorage.getItem(VLS)) || {};
+      if (!v.sugs) {
+        v.sugs = SEED_SUGGESTIONS.map(s => ({ ...s, votes: 20 + Math.floor(Math.random() * 60), mine: false }));
+        v.voted = [];
+      }
+      return v;
+    } catch (e) { return { sugs: [], voted: [] }; }
+  }
+  function saveVotes(v) { try { localStorage.setItem(VLS, JSON.stringify(v)); } catch (e) {} }
+
+  function viewCommunity() {
+    state.roadmap = null;
+    const v = getVotes();
+    v.sugs.sort((a, b) => b.votes - a.votes);
+    const rows = v.sugs.map(s => `
+      <div class="sug${v.voted.includes(s.id) ? " voted" : ""}">
+        <button class="vote" data-sid="${s.id}" title="Upvote">
+          <span class="v-arrow">\u25B2</span><b>${s.votes}</b>
+        </button>
+        <div class="sug-t"><b>${esc(s.t)}</b><span>${esc(s.d)}</span></div>
+        ${s.mine ? '<span class="sug-mine">yours</span>' : ""}
+      </div>`).join("");
+    $("app").innerHTML = `
+    <main class="wrap community">
+      <nav class="crumb"><a href="#/">Atlas</a><span>/</span><span>Community</span></nav>
+      <header class="page-hero">
+        <span class="eyebrow">\u25C8 Community</span>
+        <h2>You draw the next map</h2>
+        <p>Atlas is built with its learners. Suggest the roadmap you wish existed, and upvote the ones you want most. The most wanted get built first.</p>
+      </header>
+      <div class="sug-form">
+        <input id="sugT" maxlength="60" placeholder="Roadmap title, e.g. Ethical Hacking with Go">
+        <input id="sugD" maxlength="120" placeholder="One-line description">
+        <button class="btn-done on" id="sugAdd" style="width:auto;margin:0;padding:13px 26px">Suggest</button>
+      </div>
+      <div class="sug-list">${rows}</div>
+      <section class="why" style="margin-top:56px">
+        <div class="why-card"><span>\u{1F4AC}</span><h3>Suggest</h3><p>Missing a path? Propose it. Good suggestions rise to the top.</p></div>
+        <div class="why-card"><span>\u25B2</span><h3>Vote</h3><p>Upvote the roadmaps you want. One vote each, make it count.</p></div>
+        <div class="why-card"><span>\u{1F6E0}\uFE0F</span><h3>We build</h3><p>The most wanted roadmaps get drawn into Atlas first.</p></div>
+      </section>
+    </main>`;
+    document.querySelectorAll(".vote").forEach(b => b.addEventListener("click", () => {
+      const vv = getVotes();
+      const s = vv.sugs.find(x => x.id === b.dataset.sid);
+      if (!s) return;
+      if (vv.voted.includes(s.id)) {
+        vv.voted = vv.voted.filter(x => x !== s.id);
+        s.votes = Math.max(0, s.votes - 1);
+      } else {
+        vv.voted.push(s.id);
+        s.votes++;
+        toast("\u25B2 <b>Voted</b><span>" + esc(s.t) + "</span>");
+      }
+      saveVotes(vv);
+      viewCommunity();
+    }));
+    $("sugAdd").addEventListener("click", () => {
+      const t = $("sugT").value.trim(), d = $("sugD").value.trim() || "Suggested by the community.";
+      if (!t) { toast("Give your roadmap a title first"); return; }
+      const vv = getVotes();
+      const id = "s-" + Date.now().toString(36);
+      vv.sugs.push({ id, t: esc(t).slice(0, 60), d: esc(d).slice(0, 120), votes: 1, mine: true });
+      vv.voted.push(id);
+      saveVotes(vv);
+      toast("\u{1F4AC} <b>Suggested</b><span>Thanks for drawing with us</span>");
+      viewCommunity();
+    });
+  }
+
+  // ================= HELPFUL VOTES =================
+  const HLS = "atlas.helpful.v1";
+  function getHelpful() {
+    try { return JSON.parse(localStorage.getItem(HLS)) || {}; } catch (e) { return {}; }
+  }
+  function helpfulHtml(rmId, nid) {
+    const h = getHelpful()[rmId + ":" + nid] || { up: 0, down: 0, mine: null };
+    return `<div class="helpful"><span>Was this helpful?</span>
+      <button class="hbtn${h.mine === "up" ? " on" : ""}" data-h="up">\u{1F44D} <b>${h.up}</b></button>
+      <button class="hbtn${h.mine === "down" ? " on" : ""}" data-h="down">\u{1F44E} <b>${h.down}</b></button>
+    </div>`;
+  }
+  function wireHelpful(rmId, nid) {
+    document.querySelectorAll(".hbtn").forEach(b => b.addEventListener("click", () => {
+      const all = getHelpful(), k = rmId + ":" + nid;
+      const h = all[k] || { up: 0, down: 0, mine: null };
+      const v = b.dataset.h;
+      if (h.mine === v) { h[v]--; h.mine = null; }
+      else {
+        if (h.mine) h[h.mine]--;
+        h[v]++; h.mine = v;
+      }
+      all[k] = h;
+      try { localStorage.setItem(HLS, JSON.stringify(all)); } catch (e) {}
+      const box = b.closest(".helpful");
+      if (box) box.outerHTML = helpfulHtml(rmId, nid);
+      wireHelpful(rmId, nid);
+    }));
+  }
+
+  // ================= SHARE CARD =================
+  function shareCard() {
+    const li = Game.levelInfo();
+    const cv = document.createElement("canvas");
+    cv.width = 1200; cv.height = 630;
+    const c = cv.getContext("2d");
+    const g = c.createLinearGradient(0, 0, 1200, 630);
+    g.addColorStop(0, "#0a0f1e"); g.addColorStop(1, "#131024");
+    c.fillStyle = g; c.fillRect(0, 0, 1200, 630);
+    // glow orbs
+    const orb = (x, y, r, col) => {
+      const rg = c.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, col); rg.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = rg; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+    };
+    orb(200, 120, 320, "rgba(45,212,191,.20)");
+    orb(1000, 500, 380, "rgba(167,139,250,.20)");
+    orb(1050, 100, 220, "rgba(244,114,182,.14)");
+    // brand
+    c.fillStyle = "#2dd4bf"; c.font = "700 34px Inter, sans-serif";
+    c.fillText("\u{1F9ED} ATLAS", 80, 100);
+    c.fillStyle = "#8b93a9"; c.font = "600 24px Inter, sans-serif";
+    c.fillText("by The PenTrix", 280, 100);
+    // level
+    c.fillStyle = "#ffffff"; c.font = "900 120px Inter, sans-serif";
+    c.fillText("Level " + li.lvl, 80, 260);
+    c.fillStyle = "#2dd4bf"; c.font = "700 44px Inter, sans-serif";
+    c.fillText(li.title, 82, 320);
+    // stats
+    c.fillStyle = "#eef2f9"; c.font = "800 52px Inter, sans-serif";
+    const stats = [[li.xp + " XP", "experience"], [li.g.streak + " day", "streak"], [totalDone() + " nodes", "completed"]];
+    stats.forEach((s, i) => {
+      const x = 80 + i * 340;
+      c.fillStyle = "#eef2f9"; c.fillText(s[0], x, 440);
+      c.fillStyle = "#8b93a9"; c.font = "600 26px Inter, sans-serif";
+      c.fillText(s[1], x, 478);
+      c.font = "800 52px Inter, sans-serif";
+    });
+    // top roadmaps
+    const top = ROADMAPS.map(rm => ({ rm, pr: roadmapProgress(rm) }))
+      .sort((a, b) => b.pr.pct - a.pr.pct).slice(0, 3);
+    c.fillStyle = "#8b93a9"; c.font = "700 24px Inter, sans-serif";
+    c.fillText("TOP MAPS", 80, 545);
+    top.forEach((t, i) => {
+      const x = 80 + i * 360;
+      c.fillStyle = "#eef2f9"; c.font = "700 26px Inter, sans-serif";
+      c.fillText(t.rm.title.slice(0, 18), x, 585);
+      c.fillStyle = "rgba(255,255,255,.12)";
+      c.fillRect(x, 596, 300, 8);
+      c.fillStyle = t.rm.color;
+      c.fillRect(x, 596, 300 * t.pr.pct / 100, 8);
+    });
+    // footer
+    c.fillStyle = "#8b93a9"; c.font = "600 22px Inter, sans-serif";
+    c.fillText("mizazhaider-ceh.github.io/pentrix-atlas", 80, 610);
+    return cv;
+  }
+
+  function openShare() {
+    let ov = document.getElementById("shareOv");
+    if (ov) ov.remove();
+    ov = document.createElement("div");
+    ov.id = "shareOv";
+    ov.innerHTML = `<div class="share-card">
+      <button class="dr-x" id="shareX">\u2715</button>
+      <h3>Share your journey</h3>
+      <p class="muted">Your progress, rendered as a card.</p>
+      <div class="share-prev" id="sharePrev"></div>
+      <div class="share-btns">
+        <button class="btn-done on" id="dlCard" style="width:auto;margin:0;padding:13px 26px">\u2B07 Download PNG</button>
+        <button class="btn-done" id="cpLink" style="width:auto;margin:0;padding:13px 26px">\u{1F517} Copy link</button>
+      </div>
+    </div>`;
+    document.body.appendChild(ov);
+    requestAnimationFrame(() => ov.classList.add("open"));
+    const cv = shareCard();
+    cv.style.width = "100%"; cv.style.borderRadius = "14px";
+    document.getElementById("sharePrev").appendChild(cv);
+    document.getElementById("shareX").addEventListener("click", () => ov.remove());
+    ov.addEventListener("click", e => { if (e.target === ov) ov.remove(); });
+    document.getElementById("dlCard").addEventListener("click", () => {
+      const a = document.createElement("a");
+      a.download = "atlas-progress.png";
+      a.href = cv.toDataURL("image/png");
+      a.click();
+      toast("\u2B07 <b>Downloaded</b><span>Show the world</span>");
+    });
+    document.getElementById("cpLink").addEventListener("click", () => {
+      const url = "https://mizazhaider-ceh.github.io/pentrix-atlas/#/dashboard";
+      const done = () => toast("\u{1F517} <b>Link copied</b>");
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(done).catch(done); else done();
+    });
   }
 
   // ================= VIEW: DASHBOARD =================
@@ -335,6 +544,7 @@
           <div class="xp-t">${li.xp} XP <span>· ${li.next - li.xp} to level ${li.lvl + 1}</span></div>
         </div>
         <div class="dash-streak"><span>\u{1F525}</span><b>${li.g.streak}</b><span>day streak</span></div>
+        <button class="btn-done" id="shareBtn" style="width:auto;margin:0;padding:13px 26px;flex:none">\u{1F4E4} Share</button>
       </header>
       <div class="dash-stats">
         <div class="dstat"><b>${totalDone()}</b><span>nodes done</span></div>
@@ -349,6 +559,8 @@
       <h3 class="sec-h">\u{1F4CA} This week</h3>
       <div class="week">${weekHtml}</div>
     </main>`;
+    const sb = document.getElementById("shareBtn");
+    if (sb) sb.addEventListener("click", openShare);
   }
 
   // ---------- boot ----------
