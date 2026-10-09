@@ -129,21 +129,30 @@ const Engine = (() => {
       ty = 24;
       apply();
     }
-    let drag = null;
+    let drag = null, moved = 0, wasDrag = false;
     svg.addEventListener("pointerdown", e => {
-      drag = { x: e.clientX, y: e.clientY, tx, ty };
-      svg.setPointerCapture(e.pointerId);
+      drag = { x: e.clientX, y: e.clientY, tx, ty, pid: e.pointerId, captured: false };
+      moved = 0; wasDrag = false;
       svg.classList.add("dragging");
     });
     svg.addEventListener("pointermove", e => {
       if (!drag) return;
+      moved = Math.max(moved, Math.hypot(e.clientX - drag.x, e.clientY - drag.y));
+      if (moved > 6 && !drag.captured) {
+        drag.captured = true;
+        try { svg.setPointerCapture(drag.pid); } catch (_) {}
+      }
       tx = drag.tx + (e.clientX - drag.x);
       ty = drag.ty + (e.clientY - drag.y);
       apply();
     });
-    const end = () => { drag = null; svg.classList.remove("dragging"); };
+    const end = () => { wasDrag = moved > 6; drag = null; svg.classList.remove("dragging"); };
     svg.addEventListener("pointerup", end);
     svg.addEventListener("pointercancel", end);
+    // a real drag must not open the node drawer on release
+    svg.addEventListener("click", e => {
+      if (wasDrag) { e.stopPropagation(); e.preventDefault(); wasDrag = false; }
+    }, true);
     svg.addEventListener("wheel", e => {
       e.preventDefault();
       const r = svg.getBoundingClientRect();
