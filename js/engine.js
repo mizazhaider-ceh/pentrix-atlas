@@ -94,6 +94,7 @@ const Engine = (() => {
       div.setAttribute("data-nid", n._id);
       div.style.setProperty("--rc", roadmap.color);
       const res = (n.res || []).length;
+      div.style.animationDelay = Math.min(n._depth * 110 + (n._slot % 7) * 45, 900) + "ms";
       div.innerHTML = `<span class="a-dot"></span>
         <span class="a-t">${escapeHtml(n.t)}</span>
         <span class="a-meta">${done ? "\u2713 done" : (kids ? kids + " steps" : (res ? res + " resources" : ""))}</span>`;
@@ -113,9 +114,12 @@ const Engine = (() => {
   }
 
   // pan + zoom controller
-  function panZoom(svg, vp, W, H) {
+  function panZoom(svg, vp, W, H, onChange) {
     let scale = 1, tx = 0, ty = 0;
-    const apply = () => vp.setAttribute("transform", `translate(${tx},${ty}) scale(${scale})`);
+    const apply = () => {
+      vp.setAttribute("transform", `translate(${tx},${ty}) scale(${scale})`);
+      if (onChange) onChange({ scale, tx, ty });
+    };
     function fit() {
       const r = svg.getBoundingClientRect();
       scale = Math.min(r.width / W, r.height / H, 1) * 0.96;
@@ -152,9 +156,50 @@ const Engine = (() => {
       fit,
       zoomIn: () => { scale = Math.min(2.2, scale * 1.25); apply(); },
       zoomOut: () => { scale = Math.max(0.25, scale / 1.25); apply(); },
+      centerOn: (cx, cy) => {
+        const r = svg.getBoundingClientRect();
+        tx = r.width / 2 - cx * scale;
+        ty = r.height / 2 - cy * scale;
+        apply();
+      },
       get scale() { return scale; }
     };
   }
 
-  return { render, panZoom, escapeHtml, NW, NH };
+  // minimap: tiny overview with viewport indicator
+  function minimap(svg, rendered, color) {
+    const NS = "http://www.w3.org/2000/svg";
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const MW = 172, s = MW / rendered.W, MH = rendered.H * s;
+    svg.setAttribute("viewBox", `0 0 ${MW} ${MH}`);
+    svg.style.setProperty("--rc", color);
+    rendered.nodes.forEach(n => {
+      const r = document.createElementNS(NS, "rect");
+      r.setAttribute("x", n._x * s); r.setAttribute("y", n._y * s);
+      r.setAttribute("width", Math.max(NW * s, 2)); r.setAttribute("height", Math.max(NH * s, 2));
+      r.setAttribute("rx", 2);
+      r.setAttribute("class", "mm-node" + (n._el && n._el.classList.contains("done") ? " done" : ""));
+      svg.appendChild(r);
+    });
+    const v = document.createElementNS(NS, "rect");
+    v.setAttribute("class", "mm-view");
+    svg.appendChild(v);
+    return {
+      el: v, s, W: rendered.W, H: rendered.H,
+      update(t, vw, vh) {
+        v.setAttribute("x", (-t.tx / t.scale) * s);
+        v.setAttribute("y", (-t.ty / t.scale) * s);
+        v.setAttribute("width", (vw / t.scale) * s);
+        v.setAttribute("height", (vh / t.scale) * s);
+      },
+      refreshDone() {
+        const rects = svg.querySelectorAll(".mm-node");
+        rendered.nodes.forEach((n, i) => {
+          if (rects[i]) rects[i].classList.toggle("done", !!(n._el && n._el.classList.contains("done")));
+        });
+      }
+    };
+  }
+
+  return { render, panZoom, minimap, escapeHtml, NW, NH };
 })();

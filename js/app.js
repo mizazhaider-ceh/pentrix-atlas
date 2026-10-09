@@ -105,6 +105,18 @@
     });
   }
 
+  function markNext(rm) {
+    const p = getProgress();
+    const nxt = state.rendered.nodes.find(n => !p[rm.id + ":" + n._id]);
+    if (nxt && nxt._el) {
+      nxt._el.classList.add("next");
+      const tag = document.createElement("span");
+      tag.className = "next-tag";
+      tag.textContent = "next";
+      nxt._el.appendChild(tag);
+    }
+  }
+
   function viewRoadmap(rm) {
     state.roadmap = rm;
     $("app").innerHTML = `
@@ -127,19 +139,33 @@
         <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Click a node</span>
       </div>
     </div>
-    <div class="map-wrap"><svg id="map" style="--rc:${rm.color}"></svg></div>
+    <div class="map-wrap"><svg id="map" style="--rc:${rm.color}"></svg>
+      <div class="minimap" id="minimapBox" title="Minimap: click to jump"><svg id="minimap"></svg></div>
+    </div>
     <div class="drawer" id="drawer" hidden>
       <div class="dr-in" id="drIn"></div>
     </div>`;
     const svg = $("map");
     state.rendered = Engine.render(svg, rm, {}, nid => openDrawer(rm, nid));
     paintProgress(rm);
+    markNext(rm);
+    const mm = Engine.minimap($("minimap"), state.rendered, rm.color);
+    state.mm = mm;
+    const updMm = t => {
+      const r = svg.getBoundingClientRect();
+      mm.update(t, r.width, r.height);
+    };
+    $("minimapBox").addEventListener("click", e => {
+      const r = $("minimap").getBoundingClientRect();
+      const cx = (e.clientX - r.left) / mm.s, cy = (e.clientY - r.top) / mm.s;
+      state.pz.centerOn(cx, cy);
+    });
     const pr = roadmapProgress(rm);
     $("ringPct").textContent = pr.pct + "%";
     $("progDone").textContent = pr.done;
     $("progTotal").textContent = pr.total;
     $("ringFg").style.strokeDashoffset = 119.4 * (1 - pr.pct / 100);
-    state.pz = Engine.panZoom(svg, state.rendered.vp, state.rendered.W, state.rendered.H);
+    state.pz = Engine.panZoom(svg, state.rendered.vp, state.rendered.W, state.rendered.H, updMm);
     requestAnimationFrame(() => state.pz.fit());
     $("zin").addEventListener("click", () => state.pz.zoomIn());
     $("zout").addEventListener("click", () => state.pz.zoomOut());
@@ -157,6 +183,7 @@
       `<a class="res" href="${esc(r[1])}" target="_blank" rel="noopener">\u{1F517} ${esc(r[0])}</a>`).join("");
     $("drIn").innerHTML = `
       <button class="dr-x" id="drX">\u2715</button>
+      <div class="dr-band" style="--rc:${rm.color}"></div>
       <span class="eyebrow sm" style="--rc:${rm.color}">${esc(rm.title)}</span>
       <h3>${esc(n.t)}</h3>
       <p class="dr-d">${esc(n.d || "")}</p>
@@ -176,6 +203,7 @@
       if (elN && elN._el) elN._el.classList.toggle("done", now);
       const eg = state.rendered.edges.find(e => e.child === nid);
       if (eg) eg.el.classList.toggle("done", now);
+      if (state.mm) state.mm.refreshDone();
       $("drDone").textContent = now ? "\u2713 Completed" : "\u2713 Mark complete";
       $("drDone").classList.toggle("on", now);
       refreshRoadmapProgress(rm);
