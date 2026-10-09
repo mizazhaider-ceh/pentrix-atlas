@@ -107,6 +107,36 @@ const Engine = (() => {
     });
     vp.appendChild(ng);
 
+    // v14: hovering a node spotlights its path back to the root
+    function highlightPath(n) {
+      const keep = new Set();
+      let c = n;
+      while (c) { keep.add(c._id); c = c._parent; }
+      nodes.forEach(m => {
+        if (m._el) {
+          m._el.classList.toggle("dim", !keep.has(m._id));
+          m._el.classList.toggle("hl", keep.has(m._id));
+        }
+      });
+      edges.forEach(e => {
+        const child = byIdSafe(e.child);
+        const on = child && keep.has(e.child) && keep.has(child._parent ? child._parent._id : null);
+        e.el.classList.toggle("dim", !on);
+        e.el.classList.toggle("hl", !!on);
+      });
+    }
+    function byIdSafe(id) { return nodes.find(n => n._id === id); }
+    function clearHighlight() {
+      nodes.forEach(m => { if (m._el) { m._el.classList.remove("dim"); m._el.classList.remove("hl"); } });
+      edges.forEach(e => { e.el.classList.remove("dim"); e.el.classList.remove("hl"); });
+    }
+    nodes.forEach(n => {
+      if (n._el) {
+        n._el.addEventListener("mouseenter", () => highlightPath(n));
+        n._el.addEventListener("mouseleave", clearHighlight);
+      }
+    });
+
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     return { nodes, edges, W, H, vp, byId: Object.fromEntries(nodes.map(n => [n._id, n])) };
   }
@@ -155,6 +185,16 @@ const Engine = (() => {
     svg.addEventListener("click", e => {
       if (wasDrag) { e.stopPropagation(); e.preventDefault(); wasDrag = false; }
     }, true);
+    svg.addEventListener("dblclick", e => {
+      if (e.target.closest && e.target.closest(".anode")) return;
+      const r = svg.getBoundingClientRect();
+      const mx = e.clientX - r.left, my = e.clientY - r.top;
+      const ns = Math.min(2.2, scale * 1.5);
+      tx = mx - (mx - tx) * (ns / scale);
+      ty = my - (my - ty) * (ns / scale);
+      scale = ns;
+      apply();
+    });
     svg.addEventListener("wheel", e => {
       e.preventDefault();
       const r = svg.getBoundingClientRect();
@@ -174,6 +214,15 @@ const Engine = (() => {
         const r = svg.getBoundingClientRect();
         tx = r.width / 2 - cx * scale;
         ty = r.height / 2 - cy * scale;
+        apply();
+      },
+      setScale: ns => {
+        const r = svg.getBoundingClientRect();
+        ns = Math.min(2.2, Math.max(0.25, ns));
+        const cx = r.width / 2, cy = r.height / 2;
+        tx = cx - (cx - tx) * (ns / scale);
+        ty = cy - (cy - ty) * (ns / scale);
+        scale = ns;
         apply();
       },
       get scale() { return scale; }

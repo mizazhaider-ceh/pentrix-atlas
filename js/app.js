@@ -120,6 +120,12 @@
         <div class="why-card"><span>\u{1F4C8}</span><h3>Track progress</h3><p>Mark nodes done. Watch your map light up as you conquer it.</p></div>
       </section>
     </main>`;
+    // v12: spotlight follows the mouse on cards
+    document.querySelectorAll(".rm-card").forEach(c => c.addEventListener("pointermove", e => {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      c.style.setProperty("--my", (e.clientY - r.top) + "px");
+    }));
     const q = $("q");
     q.addEventListener("input", () => {
       const v = q.value.trim().toLowerCase();
@@ -172,10 +178,12 @@
         </div>
       </div>
       <div class="map-ctrl">
-        <button id="zin" title="Zoom in">+</button>
         <button id="zout" title="Zoom out">\u2212</button>
+        <button id="zpct" title="Reset zoom">100%</button>
+        <button id="zin" title="Zoom in">+</button>
+        <input id="zsl" type="range" min="25" max="220" value="100" title="Zoom">
         <button id="zfit" title="Fit to screen">\u29C9</button>
-        <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Click a node \u00B7 <b>Ctrl+K</b> search</span>
+        <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Double-click to zoom in \u00B7 Click a node</span>
       </div>
       <div class="legend-box">
         <span><i class="lg-dot" style="--c:#a78bfa"></i>Personal recommendation</span>
@@ -198,6 +206,13 @@
     const updMm = t => {
       const r = svg.getBoundingClientRect();
       mm.update(t, r.width, r.height);
+      const zp = document.getElementById("zpct");
+      if (zp) zp.textContent = Math.round(t.scale * 100) + "%";
+      const zs = document.getElementById("zsl");
+      if (zs && document.activeElement !== zs) {
+        zs.value = Math.round(t.scale * 100);
+        zs.style.setProperty("--fill", ((zs.value - 25) / 195 * 100) + "%");
+      }
     };
     $("minimapBox").addEventListener("click", e => {
       const r = $("minimap").getBoundingClientRect();
@@ -224,6 +239,8 @@
     $("zin").addEventListener("click", () => state.pz.zoomIn());
     $("zout").addEventListener("click", () => state.pz.zoomOut());
     $("zfit").addEventListener("click", () => state.pz.fit());
+    $("zpct").addEventListener("click", () => state.pz.setScale(1));
+    $("zsl").addEventListener("input", e => state.pz.setScale(e.target.value / 100));
     window.addEventListener("resize", () => state.pz && state.pz.fit());
   }
 
