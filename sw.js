@@ -1,4 +1,4 @@
-const CACHE = "atlas-v8";
+const CACHE = "atlas-v22";
 const CORE = ["./", "./index.html", "./manifest.json", "./icon.svg",
   "./css/styles.css", "./js/data.js", "./js/depth.js", "./js/engine.js", "./js/game.js", "./js/app.js"];
 

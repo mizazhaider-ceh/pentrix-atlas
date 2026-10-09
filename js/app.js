@@ -364,7 +364,7 @@
     const learn = (dep.l || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
     const todo = (dep.d || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
     const resLib = resourceLibrary(n.res || []);
-    const crumb = chain.map(a => `<button class="crumb" data-nid="${a._id}">${esc(a.t)}</button>`).join('<span class="crumb-sep">' + B + "u203A</span>");
+    const crumb = chain.map(a => `<button class="crumb" data-nid="${a._id}">${esc(a.t)}</button>`).join('<span class="crumb-sep">›</span>');
     const level = n._depth === 0 ? "Overview" : (n._depth === 1 ? "Beginner" : (n._depth === 2 ? "Intermediate" : "Advanced"));
     const quiz = (typeof QUIZ !== "undefined" ? QUIZ[rm.id + "::" + n.t] : null) || [];
     const quizHtml = quiz.length ? quiz.map((qq, qi) =>
