@@ -432,10 +432,10 @@
       <div class="sug-form">
         <input id="sugT" maxlength="60" placeholder="Roadmap title, e.g. Ethical Hacking with Go">
         <input id="sugD" maxlength="120" placeholder="One-line description">
-        <button class="btn-done on" id="sugAdd" style="width:auto;margin:0;padding:13px 26px">Suggest</button>
+        <button class="btn-done on" id="sugAdd" style="width:auto;margin:0;padding:0.8125rem 1.625rem">Suggest</button>
       </div>
       <div class="sug-list">${rows}</div>
-      <section class="why" style="margin-top:56px">
+      <section class="why" style="margin-top:3.5rem">
         <div class="why-card"><span>\u{1F4AC}</span><h3>Suggest</h3><p>Missing a path? Propose it. Good suggestions rise to the top.</p></div>
         <div class="why-card"><span>\u25B2</span><h3>Vote</h3><p>Upvote the roadmaps you want. One vote each, make it count.</p></div>
         <div class="why-card"><span>\u{1F6E0}\uFE0F</span><h3>We build</h3><p>The most wanted roadmaps get drawn into Atlas first.</p></div>
@@ -568,8 +568,8 @@
       <p class="muted">Your progress, rendered as a card.</p>
       <div class="share-prev" id="sharePrev"></div>
       <div class="share-btns">
-        <button class="btn-done on" id="dlCard" style="width:auto;margin:0;padding:13px 26px">\u2B07 Download PNG</button>
-        <button class="btn-done" id="cpLink" style="width:auto;margin:0;padding:13px 26px">\u{1F517} Copy link</button>
+        <button class="btn-done on" id="dlCard" style="width:auto;margin:0;padding:0.8125rem 1.625rem">\u2B07 Download PNG</button>
+        <button class="btn-done" id="cpLink" style="width:auto;margin:0;padding:0.8125rem 1.625rem">\u{1F517} Copy link</button>
       </div>
     </div>`;
     document.body.appendChild(ov);
@@ -629,7 +629,7 @@
           <div class="xp-t">${li.xp} XP <span>· ${li.next - li.xp} to level ${li.lvl + 1}</span></div>
         </div>
         <div class="dash-streak"><span>\u{1F525}</span><b>${li.g.streak}</b><span>day streak</span></div>
-        <button class="btn-done" id="shareBtn" style="width:auto;margin:0;padding:13px 26px;flex:none">\u{1F4E4} Share</button>
+        <button class="btn-done" id="shareBtn" style="width:auto;margin:0;padding:0.8125rem 1.625rem;flex:none">\u{1F4E4} Share</button>
       </header>
       <div class="dash-stats">
         <div class="dstat"><b>${totalDone()}</b><span>nodes done</span></div>
