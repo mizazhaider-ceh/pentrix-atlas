@@ -126,7 +126,7 @@ const Engine = (() => {
     function fit() {
       const r = svg.getBoundingClientRect();
       const fs = Math.min(r.width / W, r.height / H);
-      scale = Math.min(1, Math.max(fs, 0.62));
+      scale = Math.min(1, Math.max(fs, 0.7));
       tx = r.width / 2 - hx * scale;
       ty = Math.max(20, r.height * 0.14 - hy * scale);
       apply();
