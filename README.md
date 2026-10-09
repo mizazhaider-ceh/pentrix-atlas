@@ -11,7 +11,7 @@ Interactive visual roadmaps for developers, hackers and the endlessly curious. I
 - **Visual roadmap graphs** — custom SVG engine: tidy tree layout, curved edges, pan and zoom
 - **Click any node** — a detail drawer opens with the what, the why, and free resources
 - **Track progress** — mark nodes done, watch your map light up and your percentage climb
-- **6 launch roadmaps** — Cyber Security, Frontend, Backend, DevOps, Python, Linux
+- **9 roadmaps** — Cyber Security, Frontend, Backend, DevOps, Python, Linux
 - **100% free, 100% offline-friendly** — no account, no paywall, progress in your browser
 
 ## 🗺️ Roadmaps
@@ -22,7 +22,10 @@ Interactive visual roadmaps for developers, hackers and the endlessly curious. I
 | 🎨 Frontend Development | 11 |
 | ⚙️ Backend Development | 9 |
 | ♾️ DevOps | 9 |
-| 🐍 Python | 9 |
+| 🐍 Python | 7 |
+| 🎯 Bug Bounty Hunting | 14 |
+| 🌐 Computer Networking | 8 |
+| ☁️ Cloud Computing | 7 |
 | 🐧 Linux | 9 |
 
 ## 🚀 Run locally

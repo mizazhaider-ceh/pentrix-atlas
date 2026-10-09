@@ -188,3 +188,19 @@ body::after{content:"";position:fixed;inset:-20%;z-index:-1;opacity:.55;pointer-
 .rm-card:nth-child(4){animation-delay:.18s}.rm-card:nth-child(5){animation-delay:.24s}
 .rm-card:nth-child(6){animation-delay:.3s}
 @media(max-width:720px){.minimap{width:120px}}
+
+/* ================= v3: content depth ================= */
+.time-badge{display:inline-block;font-size:12px;font-weight:700;color:var(--muted);
+  border:1px solid var(--border);padding:5px 12px;border-radius:99px;margin-bottom:14px;background:var(--surface)}
+.dl-learn{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:6px}
+.dl-learn li{display:flex;gap:11px;font-size:14px;line-height:1.6;color:#dfe5f2}
+.dl-learn li::before{content:"\25C8";color:var(--rc,#2dd4bf);flex:none;font-size:11px;margin-top:4px}
+.dl-do{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:10px;counter-reset:st}
+.dl-do li{display:flex;gap:12px;font-size:14px;line-height:1.6;color:#dfe5f2;counter-increment:st;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 14px}
+.dl-do li::before{content:counter(st,decimal-leading-zero);flex:none;font-family:'Space Grotesk',monospace;
+  font-size:11px;font-weight:700;color:#06110f;background:linear-gradient(135deg,var(--rc,#2dd4bf),#fff);
+  width:26px;height:26px;border-radius:8px;display:grid;place-items:center}
+.kids-h{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:20px 0 10px}
+.kids{display:flex;flex-direction:column;gap:8px}
+.dr-pane{animation:nodeIn .3s}

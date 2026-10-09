@@ -192,4 +192,107 @@ const ROADMAPS = [
     ]
   }
 }
+,
+{
+  id:"bug-bounty", title:"Bug Bounty Hunting", icon:"\u{1F3AF}", color:"#f43f5e",
+  tagline:"Get paid to hack, legally.",
+  desc:"From recon at scale to writeups that get paid: the complete hunter path.",
+  root:{
+    t:"The Hunter Mindset", d:"Scope, rules of engagement, and how payouts work.",
+    res:[["HackerOne Hacktivity","https://hackerone.com/hacktivity"],["Bugcrowd","https://www.bugcrowd.com/"]],
+    children:[
+      { t:"Web Fundamentals, Deep", d:"You cannot hack what you do not understand.",
+        res:[["PortSwigger Academy","https://portswigger.net/web-security"],["MDN Web Docs","https://developer.mozilla.org/"]],
+        children:[
+          { t:"HTTP Deep Dive", d:"Methods, headers, cookies, CORS. The protocol of money.",
+            res:[["MDN: HTTP","https://developer.mozilla.org/en-US/docs/Web/HTTP"],["PortSwigger: HTTP","https://portswigger.net/web-security"]] },
+          { t:"JavaScript for Hackers", d:"DOM, XSS sinks and sources.",
+            res:[["PortSwigger: XSS","https://portswigger.net/web-security/cross-site-scripting"],["JavaScript.info","https://javascript.info/"]] }
+        ]},
+      { t:"Recon at Scale", d:"More targets, more bugs. Automate everything.",
+        res:[["Amass","https://github.com/owasp-amass/amass"],["Subfinder","https://github.com/projectdiscovery/subfinder"]],
+        children:[
+          { t:"Subdomain Enumeration", d:"Find every door before knocking.",
+            res:[["Subfinder","https://github.com/projectdiscovery/subfinder"],["crt.sh","https://crt.sh/"]] },
+          { t:"Content Discovery", d:"Fuzz for hidden paths and files.",
+            res:[["ffuf","https://github.com/ffuf/ffuf"],["SecLists","https://github.com/danielmiessler/SecLists"]] }
+        ]},
+      { t:"Vulnerability Classes", d:"Know the classics cold. They pay the most.",
+        res:[["OWASP Top 10","https://owasp.org/www-project-top-ten/"],["HackTricks","https://book.hacktricks.xyz/"]],
+        children:[
+          { t:"IDOR & Access Control", d:"The most common paid bug class.",
+            res:[["PortSwigger: Access Control","https://portswigger.net/web-security/access-control"],["OWASP Top 10","https://owasp.org/www-project-top-ten/"]] },
+          { t:"SSRF & XXE", d:"Make servers attack themselves.",
+            res:[["PortSwigger: SSRF","https://portswigger.net/web-security/ssrf"],["HackTricks","https://book.hacktricks.xyz/"]] },
+          { t:"Race Conditions", d:"Timing is a vulnerability.",
+            res:[["PortSwigger: Race Conditions","https://portswigger.net/web-security/race-conditions"],["OWASP","https://owasp.org/"]] }
+        ]},
+      { t:"Hunter Methodology", d:"System beats luck. Hunt like a professional.",
+        res:[["HackerOne","https://hackerone.com/"],["Intigriti","https://www.intigriti.com/"]],
+        children:[
+          { t:"Target Selection", d:"Pick programs you can actually win.",
+            res:[["HackerOne Directory","https://hackerone.com/directory"],["Intigriti","https://www.intigriti.com/"]] },
+          { t:"Report Writing", d:"Clear reports get paid. Vague ones get closed.",
+            res:[["OWASP Disclosure Sheet","https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"],["HackerOne Hacktivity","https://hackerone.com/hacktivity"]] }
+        ]}
+    ]
+  }
+},
+{
+  id:"networking", title:"Computer Networking", icon:"\u{1F310}", color:"#38bdf8",
+  tagline:"Master the wires of the world.",
+  desc:"From packets to firewalls: networking for hackers, devs and the curious.",
+  root:{
+    t:"Networks 101", d:"What actually happens when you open a website.",
+    res:[["Cloudflare Learning","https://www.cloudflare.com/learning/"],["Practical Networking","https://www.practicalnetworking.net/"]],
+    children:[
+      { t:"OSI & TCP/IP", d:"The models that explain everything.",
+        res:[["Cloudflare: OSI Model","https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/"],["Practical Networking","https://www.practicalnetworking.net/"]],
+        children:[
+          { t:"IP & Subnetting", d:"Addressing and CIDR math. Do it in your head.",
+            res:[["CIDR.xyz","https://cidr.xyz/"],["Practical Networking Subnetting","https://www.practicalnetworking.net/"]] },
+          { t:"DNS Deep Dive", d:"The phonebook of the internet.",
+            res:[["howdns.works","https://howdns.works/"],["Cloudflare: What is DNS","https://www.cloudflare.com/learning/dns/what-is-dns/"]] }
+        ]},
+      { t:"Routing & Switching", d:"How packets find their way across the world.",
+        res:[["Practical Networking","https://www.practicalnetworking.net/"],["Cloudflare Learning","https://www.cloudflare.com/learning/"]] },
+      { t:"Wireshark Mastery", d:"Read the wire. See every packet.",
+        res:[["Wireshark Docs","https://www.wireshark.org/docs/"],["Sample Captures","https://wiki.wireshark.org/SampleCaptures"]] },
+      { t:"Network Services", d:"DHCP, NAT, firewalls. The infrastructure you touch daily.",
+        res:[["Cloudflare Learning","https://www.cloudflare.com/learning/"],["Practical Networking","https://www.practicalnetworking.net/"]],
+        children:[
+          { t:"Firewalls & NAT", d:"What blocks you, and why.",
+            res:[["Cloudflare: Firewalls","https://www.cloudflare.com/learning/"],["Practical Networking","https://www.practicalnetworking.net/"]] }
+        ]}
+    ]
+  }
+},
+{
+  id:"cloud", title:"Cloud Computing", icon:"\u2601\uFE0F", color:"#e879f9",
+  tagline:"Own the cloud.",
+  desc:"AWS core services and cloud security: build it, then break it (legally).",
+  root:{
+    t:"Cloud Concepts", d:"Regions, zones, and the shared responsibility model.",
+    res:[["AWS Skill Builder","https://skillbuilder.aws/"],["AWS Docs","https://docs.aws.amazon.com/"]],
+    children:[
+      { t:"AWS Core Services", d:"EC2, S3, VPC, IAM. The big four.",
+        res:[["AWS Docs","https://docs.aws.amazon.com/"],["AWS Skill Builder","https://skillbuilder.aws/"]],
+        children:[
+          { t:"IAM Deep Dive", d:"Who can do what. The number one misconfig source.",
+            res:[["AWS IAM Docs","https://docs.aws.amazon.com/iam/"],["HackTricks Cloud","https://cloud.hacktricks.xyz/"]] },
+          { t:"S3 & Storage", d:"Buckets leak. Yours must not.",
+            res:[["AWS S3 Docs","https://docs.aws.amazon.com/s3/"],["HackTricks Cloud","https://cloud.hacktricks.xyz/"]] }
+        ]},
+      { t:"Cloud Security", d:"Think like an attacker in the cloud.",
+        res:[["HackTricks Cloud","https://cloud.hacktricks.xyz/"],["AWS Security Docs","https://docs.aws.amazon.com/security/"]],
+        children:[
+          { t:"Common Misconfigurations", d:"Public buckets, open security groups, leaked keys.",
+            res:[["HackTricks Cloud","https://cloud.hacktricks.xyz/"],["Prowler","https://github.com/prowler-cloud/prowler"]] },
+          { t:"ScoutSuite & Prowler", d:"Audit cloud configs automatically.",
+            res:[["ScoutSuite","https://github.com/nccgroup/ScoutSuite"],["Prowler","https://github.com/prowler-cloud/prowler"]] }
+        ]}
+    ]
+  }
+}
+
 ];

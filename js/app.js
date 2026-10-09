@@ -177,23 +177,34 @@
     const n = state.rendered.byId[nid];
     if (!n) return;
     const done = isDone(rm.id, nid);
+    const dep = (typeof DEPTH !== "undefined" ? DEPTH[rm.id + "::" + n.t] : null) || {};
     const kids = (n.children || []).map(c =>
       `<button class="kid" data-nid="${c._id}">${esc(c.t)}</button>`).join("");
     const res = (n.res || []).map(r =>
       `<a class="res" href="${esc(r[1])}" target="_blank" rel="noopener">\u{1F517} ${esc(r[0])}</a>`).join("");
+    const learn = (dep.l || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
+    const todo = (dep.d || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
     $("drIn").innerHTML = `
       <button class="dr-x" id="drX">\u2715</button>
       <div class="dr-band" style="--rc:${rm.color}"></div>
       <span class="eyebrow sm" style="--rc:${rm.color}">${esc(rm.title)}</span>
       <h3>${esc(n.t)}</h3>
+      ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
       <p class="dr-d">${esc(n.d || "")}</p>
       <button class="btn-done${done ? " on" : ""}" id="drDone">${done ? "\u2713 Completed" : "\u2713 Mark complete"}</button>
       <div class="dr-tabs">
-        <button class="dr-tab on" data-tab="res">Resources</button>
-        <button class="dr-tab" data-tab="next">Next steps</button>
+        <button class="dr-tab on" data-tab="learn">Learn</button>
+        <button class="dr-tab" data-tab="do">Practice</button>
+        <button class="dr-tab" data-tab="res">Resources</button>
       </div>
-      <div class="dr-pane" id="paneRes">${res || '<p class="muted">No links yet.</p>'}</div>
-      <div class="dr-pane" id="paneNext" hidden>${kids || '<p class="muted">You finished this branch. Pick another path.</p>'}</div>`;
+      <div class="dr-pane" id="paneLearn">
+        ${learn ? `<ul class="dl-learn">${learn}</ul>` : `<p class="muted">Core concepts coming with the description above.</p>`}
+        ${kids ? `<div class="kids-h">Continue to</div><div class="kids">${kids}</div>` : ""}
+      </div>
+      <div class="dr-pane" id="paneDo" hidden>
+        ${todo ? `<ol class="dl-do">${todo}</ol>` : '<p class="muted">Hands-on steps coming soon.</p>'}
+      </div>
+      <div class="dr-pane" id="paneRes" hidden>${res || '<p class="muted">No links yet.</p>'}</div>`;
     $("drawer").hidden = false;
     requestAnimationFrame(() => $("drawer").classList.add("open"));
     $("drX").addEventListener("click", closeDrawer);
@@ -211,8 +222,10 @@
     document.querySelectorAll(".dr-tab").forEach(b => b.addEventListener("click", () => {
       document.querySelectorAll(".dr-tab").forEach(x => x.classList.remove("on"));
       b.classList.add("on");
-      $("paneRes").hidden = b.dataset.tab !== "res";
-      $("paneNext").hidden = b.dataset.tab !== "next";
+      ["learn", "do", "res"].forEach(t => {
+        const p = $("pane" + t[0].toUpperCase() + t.slice(1));
+        if (p) p.hidden = b.dataset.tab !== t;
+      });
     }));
     document.querySelectorAll(".kid").forEach(b => b.addEventListener("click", () => openDrawer(rm, b.dataset.nid)));
   }
