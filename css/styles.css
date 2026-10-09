@@ -598,3 +598,6 @@ body::before{
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
 }
+
+/* ================= v17: confetti ================= */
+#confettiCv{position:fixed;inset:0;z-index:500;pointer-events:none}

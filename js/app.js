@@ -27,6 +27,44 @@
     return { done, total: nodes.length, pct: nodes.length ? Math.round(done / nodes.length * 100) : 0 };
   }
 
+  // ---------- confetti ----------
+  function confetti() {
+    const cv = document.createElement("canvas");
+    cv.id = "confettiCv";
+    cv.width = innerWidth; cv.height = innerHeight;
+    document.body.appendChild(cv);
+    const c = cv.getContext("2d");
+    const colors = ["#2dd4bf", "#a78bfa", "#f472b6", "#fbbf24", "#4ade80", "#fff"];
+    const ps = [];
+    for (let i = 0; i < 140; i++) {
+      ps.push({
+        x: innerWidth / 2 + (Math.random() - 0.5) * 200,
+        y: innerHeight * 0.35,
+        vx: (Math.random() - 0.5) * 13,
+        vy: Math.random() * -11 - 3,
+        s: Math.random() * 8 + 4,
+        r: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.3,
+        col: colors[i % colors.length],
+        life: 1
+      });
+    }
+    const t0 = performance.now();
+    (function tick(t) {
+      const el = (t - t0) / 2600;
+      c.clearRect(0, 0, cv.width, cv.height);
+      ps.forEach(p => {
+        p.vy += 0.32; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life = 1 - el;
+        c.save(); c.globalAlpha = Math.max(0, p.life);
+        c.translate(p.x, p.y); c.rotate(p.r);
+        c.fillStyle = p.col; c.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.62);
+        c.restore();
+      });
+      if (el < 1) requestAnimationFrame(tick);
+      else cv.remove();
+    })(t0);
+  }
+
   // ---------- toast ----------
   function toast(html, ms) {
     let box = document.getElementById("toasts");
@@ -305,7 +343,10 @@
         const pr2 = roadmapProgress(rm);
         if (pr2.pct === 100) {
           const fa = Game.grant("finisher");
-          if (fa) toast(fa.icon + " <b>" + esc(fa.t) + "</b><span>You finished " + esc(rm.title) + "</span>", 3800);
+          if (fa) {
+            toast(fa.icon + " <b>" + esc(fa.t) + "</b><span>You finished " + esc(rm.title) + "</span>", 3800);
+            confetti();
+          }
         }
         updateLvlChip();
       }
