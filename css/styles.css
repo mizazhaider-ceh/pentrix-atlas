@@ -776,3 +776,9 @@ body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opa
 .q-exp b{color:var(--text)}
 .q-score{font-size:1.125rem;margin:1rem 0;text-align:center}
 .q-retry{display:block;margin:0 auto;background:var(--lime);color:#000;border:none;border-radius:624.9375rem;padding:0.625rem 1.5rem;font-weight:700;cursor:pointer;font-family:var(--mono);font-size:0.75rem;letter-spacing:.08em;text-transform:uppercase}
+
+/* ================= v21: layout repair ================= */
+/* simplified nodes at overview zoom */
+#map.far .a-meta, #map.far .abadge{display:none}
+#map.far .anode{border-width:0.125rem}
+#map.far .anode.root{border-width:0.15625rem}

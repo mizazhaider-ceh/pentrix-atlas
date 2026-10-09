@@ -15,20 +15,88 @@ const Engine = (() => {
     return nodes;
   }
 
-  // tidy tree layout: leaves get slots, parents center over children
-  function layout(roots) {
+  // v21 banded hierarchical layout.
+  // Root cause of the old "thin strip": the tidy tree gave every LEAF one horizontal
+  // slot, so Linux became a 10772x624 strip (17:1). This layout instead stacks each
+  // category's descendants vertically inside a category block, then flows the blocks
+  // into rows. The categories-per-row K is chosen adaptively so the whole graph's
+  // aspect ratio matches the container. Positions derive from tree structure +
+  // measured constants; nothing is hardcoded per topic.
+  function layout(roots, aspect) {
+    const root = roots[0];
+    const cats = root.children || [];
     let slot = 0;
-    function walk(n, depth) {
-      n._depth = depth;
-      const kids = n.children || [];
-      if (!kids.length) { n._slot = slot++; }
-      else {
-        kids.forEach(k => walk(k, depth + 1));
-        n._slot = (kids[0]._slot + kids[kids.length - 1]._slot) / 2;
-      }
+    function depthWalk(n, d) {
+      n._depth = d; n._slot = slot++;
+      (n.children || []).forEach(k => depthWalk(k, d + 1));
     }
-    roots.forEach(r => walk(r, 0));
-    return roots;
+    root._depth = 0; root._slot = slot++; root._w = 320;
+    cats.forEach(c => { c._w = NW; depthWalk(c, 1); });
+
+    const ROWH = NH + VGAP;      // 168 per stacked row
+    const INDENT = 28;           // grandchild indent inside a block
+    const GAPX = 84, GAPY = 130;
+    const PAD = 40;
+
+    // one block per category: pre-order vertical stack of all descendants
+    const blocks = cats.map(c => {
+      const rows = [];
+      (function walk(n, indent) {
+        rows.push({ n, indent });
+        (n.children || []).forEach(k => walk(k, indent + 1));
+      })(c, 0);
+      const w = NW + (rows.some(r => r.indent > 0) ? INDENT : 0);
+      const h = rows.length * NH + (rows.length - 1) * VGAP;
+      return { rows, w, h };
+    });
+
+    // adaptive K: pick categories-per-row so W/H matches the container aspect
+    const n = blocks.length;
+    aspect = Math.min(3, Math.max(1, aspect || 1.6));
+    function dims(K) {
+      const nrows = Math.ceil(n / K);
+      let W = 0, H = 0;
+      for (let r = 0; r < nrows; r++) {
+        const slice = blocks.slice(r * K, (r + 1) * K);
+        W = Math.max(W, slice.reduce((a, b) => a + b.w, 0) + GAPX * (slice.length - 1));
+        H += Math.max(...slice.map(b => b.h)) + (r ? GAPY : 0);
+      }
+      return { W, H };
+    }
+    let bestK = n || 1, bestScore = 1e18;
+    for (let K = 1; K <= Math.max(n, 1); K++) {
+      const { W, H } = dims(K);
+      const ratio = W / Math.max(H, 1);
+      let score = Math.abs(ratio - aspect);
+      if (ratio < 0.5) score += 2;      // penalize tall strips
+      if (ratio > 4) score += 2;        // penalize wide strips
+      if (score < bestScore) { bestScore = score; bestK = K; }
+    }
+
+    // place blocks row by row, rows centered
+    const { W: contentW } = dims(bestK);
+    let y = PAD + NH + 96;             // root node + gap
+    const nrows = Math.ceil(n / bestK);
+    for (let r = 0; r < nrows; r++) {
+      const slice = blocks.slice(r * bestK, (r + 1) * bestK);
+      const rowW = slice.reduce((a, b) => a + b.w, 0) + GAPX * (slice.length - 1);
+      const rowH = Math.max(...slice.map(b => b.h));
+      let x = (contentW - rowW) / 2;   // center this row
+      slice.forEach(b => {
+        b.rows.forEach((row, i) => {
+          row.n._w = row.n._depth === 0 ? 320 : NW;
+          row.n._x = x + row.indent * INDENT;
+          row.n._y = y + i * ROWH;
+        });
+        x += b.w + GAPX;
+      });
+      y += rowH + GAPY;
+    }
+    const W = contentW + PAD * 2;
+    const H = (n ? y - GAPY : PAD + NH) + PAD;
+    root._x = contentW / 2 - root._w / 2;
+    root._y = PAD;
+    return { W, H };
   }
 
   function render(svg, roadmap, progress, onNode, tagFor) {
@@ -36,18 +104,12 @@ const Engine = (() => {
     const XNS = "http://www.w3.org/1999/xhtml";
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     const nodes = flatten(roadmap.root);
-    layout([roadmap.root]);
-
-    let maxSlot = 0, maxDepth = 0;
-    nodes.forEach(n => {
-      n._w = n._depth === 0 ? 320 : NW;
-      n._x = n._slot * (NW + HGAP) + (NW - n._w) / 2;
-      n._y = n._depth * (NH + VGAP);
-      maxSlot = Math.max(maxSlot, n._slot);
-      maxDepth = Math.max(maxDepth, n._depth);
-    });
-    const W = (maxSlot + 1) * (NW + HGAP) + 80;
-    const H = (maxDepth + 1) * (NH + VGAP) + 120;
+    let ar = 1.6;
+    try {
+      const sr = svg.getBoundingClientRect();
+      if (sr.width > 50 && sr.height > 50) ar = sr.width / sr.height;
+    } catch (_) {}
+    const { W, H } = layout([roadmap.root], ar);
 
     const vp = document.createElementNS(NS, "g");
     vp.setAttribute("class", "viewport");
@@ -180,19 +242,26 @@ const Engine = (() => {
   // pan + zoom controller
   function panZoom(svg, vp, W, H, onChange) {
     let scale = 1, tx = 0, ty = 0;
+    let interacted = false;   // v21: once the user pans/zooms, we never auto-refit
     const apply = () => {
       vp.setAttribute("transform", `translate(${tx},${ty}) scale(${scale})`);
+      try { svg.classList.toggle("far", scale < 0.55); } catch (_) {}
       if (onChange) onChange({ scale, tx, ty });
     };
-    let hx = W / 2, hy = 60;
+    // v21: fit the real graph bounds, centered, with padding. Returns false if the
+    // container has no size yet (caller retries on the next frame).
     function fit() {
       const r = svg.getBoundingClientRect();
-      const fs = Math.min(r.width / W, r.height / H);
-      scale = Math.min(1, Math.max(fs, 0.7));
-      tx = r.width / 2 - hx * scale;
-      ty = Math.max(20, r.height * 0.14 - hy * scale);
+      if (!r.width || !r.height || !W || !H) return false;
+      const pad = 56;
+      const fs = Math.min((r.width - pad) / W, (r.height - pad) / H);
+      scale = Math.min(1, Math.max(fs, 0.3));
+      tx = (r.width - W * scale) / 2;
+      ty = Math.max(14, (r.height - H * scale) / 2);
       apply();
+      return true;
     }
+    function fitIfFresh() { if (!interacted) fit(); }
     let anim = null;
     function tweenTo(ns, ntx, nty, dur) {
       if (anim) cancelAnimationFrame(anim);
@@ -211,6 +280,7 @@ const Engine = (() => {
       anim = requestAnimationFrame(step);
     }
     function zoomAt(mx, my, factor, animate) {
+      interacted = true;
       const ns = Math.min(2.2, Math.max(0.25, scale * factor));
       const ntx = mx - (mx - tx) * (ns / scale);
       const nty = my - (my - ty) * (ns / scale);
@@ -246,6 +316,7 @@ const Engine = (() => {
       }
       if (!drag) return;
       moved = Math.max(moved, Math.hypot(e.clientX - drag.x, e.clientY - drag.y));
+      if (moved > 6) interacted = true;
       if (moved > 6 && !drag.captured) {
         drag.captured = true;
         try { svg.setPointerCapture(drag.pid); } catch (_) {}
@@ -264,6 +335,7 @@ const Engine = (() => {
     }, true);
     svg.addEventListener("dblclick", e => {
       if (e.target.closest && e.target.closest(".anode")) return;
+      interacted = true;
       const r = svg.getBoundingClientRect();
       const mx = e.clientX - r.left, my = e.clientY - r.top;
       zoomAt(mx, my, 1.5, true);
@@ -275,17 +347,19 @@ const Engine = (() => {
       zoomAt(mx, my, e.deltaY < 0 ? 1.12 : 0.89, false);
     }, { passive: false });
     return {
-      fit,
-      home(cx, cy) { hx = cx; hy = cy; },
+      fit, fitIfFresh,
+      home(cx, cy) { interacted = true; },
       zoomIn: () => { const r = svg.getBoundingClientRect(); zoomAt(r.width / 2, r.height / 2, 1.25, true); },
       zoomOut: () => { const r = svg.getBoundingClientRect(); zoomAt(r.width / 2, r.height / 2, 1 / 1.25, true); },
       centerOn: (cx, cy) => {
+        interacted = true;
         const r = svg.getBoundingClientRect();
         tx = r.width / 2 - cx * scale;
         ty = r.height / 2 - cy * scale;
         apply();
       },
       setScale: (ns, animate) => {
+        interacted = true;
         const r = svg.getBoundingClientRect();
         ns = Math.min(2.2, Math.max(0.25, ns));
         const cx = r.width / 2, cy = r.height / 2;

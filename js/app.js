@@ -328,9 +328,8 @@
     $("progTotal").textContent = pr.total;
     $("ringFg").style.strokeDashoffset = 119.4 * (1 - pr.pct / 100);
     state.pz = Engine.panZoom(svg, state.rendered.vp, state.rendered.W, state.rendered.H, updMm);
-    const r0 = state.rendered.nodes[0];
-    state.pz.home(r0._x + (r0._w || Engine.NW) / 2 + 40, r0._y + Engine.NH / 2 + 40);
-    requestAnimationFrame(() => state.pz.fit());
+    // v21: single reliable initial fit on the real bounds; retry once if layout isn't ready
+    if (!state.pz.fit()) requestAnimationFrame(() => { if (state.pz) state.pz.fit(); });
     if (state.pendingNode && state.pendingNode.rmId === rm.id) {
       const t = state.pendingNode.title;
       state.pendingNode = null;
@@ -344,7 +343,7 @@
     $("zfit").addEventListener("click", () => state.pz.fit());
     $("zpct").addEventListener("click", () => state.pz.setScale(1));
     $("zsl").addEventListener("input", e => state.pz.setScale(e.target.value / 100, false));
-    window.addEventListener("resize", () => state.pz && state.pz.fit());
+    window.onresize = () => { if (state.pz) state.pz.fitIfFresh(); };
   }
 
   function openDrawer(rm, nid) {
