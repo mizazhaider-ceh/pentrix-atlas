@@ -463,3 +463,49 @@ body::before{
   box-shadow:0 1px 0 rgba(255,255,255,.05) inset}
 .sec-h{font-family:'Space Grotesk',sans-serif;letter-spacing:-.5px;font-weight:700}
 .page-hero h2{font-weight:700}
+
+/* ================= v10: roadmap.sh-style diagram ================= */
+/* nodes: tinted fill like their yellow topics, 2px border, centered single-line */
+.anode{width:260px;height:58px;border-radius:12px;padding:8px 14px;
+  background:color-mix(in srgb,var(--rc) 16%,rgba(13,17,27,.97));
+  border:2px solid color-mix(in srgb,var(--rc) 55%,transparent);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;
+  text-align:center;transition:transform .2s,border-color .2s,box-shadow .2s;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 8px 20px -10px rgba(0,0,0,.6)}
+.anode:hover{transform:translateY(-2px) scale(1.03);z-index:5;
+  border-color:color-mix(in srgb,var(--rc) 85%,#fff 8%);
+  box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 14px 30px -10px rgba(0,0,0,.65),
+  0 0 24px -6px color-mix(in srgb,var(--rc) 55%,transparent)}
+.anode.root{background:linear-gradient(135deg,var(--rc),color-mix(in srgb,var(--rc) 55%,#a78bfa));
+  border-color:transparent;box-shadow:0 10px 30px -8px color-mix(in srgb,var(--rc) 60%,transparent)}
+.anode.root .a-t{color:#06110f;font-size:16.5px}
+.anode.root .a-meta{color:rgba(6,17,15,.72)}
+.a-t{display:block;font-size:15px;font-weight:700;letter-spacing:-.2px;line-height:1.25;color:#f4f7fc;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0}
+.a-meta{font-size:10.5px;color:#9aa3b8;font-weight:600;letter-spacing:.4px;padding:0}
+.anode.done{border-color:var(--rc);
+  background:color-mix(in srgb,var(--rc) 26%,rgba(13,17,27,.97));
+  box-shadow:0 0 20px -4px color-mix(in srgb,var(--rc) 55%,transparent)}
+.anode.done .a-meta{color:var(--rc);font-weight:700}
+/* opinion tags recolor the border */
+.anode.tag-rec{border-color:#a78bfa}
+.anode.tag-alt{border-color:#4ade80}
+.anode.tag-opt{opacity:.8;border-style:dashed}
+/* next node: soft glow ring instead of pulse */
+.anode.next{border-color:var(--rc);animation:nodeIn .55s backwards;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--rc) 30%,transparent),
+  0 8px 20px -10px rgba(0,0,0,.6)}
+.next-tag{top:-11px;right:10px}
+/* edges: roadmap color, 2.5px, dashed for optional */
+.edge{fill:none;stroke:var(--rc);stroke-width:2.5;stroke-linecap:round;opacity:.75;transition:.3s}
+.edge.opt{stroke-dasharray:7 7;opacity:.5}
+.edge.done{opacity:1;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--rc) 60%,transparent))}
+/* legend: bordered box like roadmap.sh */
+.map-wrap{position:relative}
+.legend-box{position:absolute;top:14px;left:14px;z-index:5;display:flex;flex-direction:column;gap:9px;
+  background:rgba(8,11,19,.88);border:1px solid var(--border);border-radius:14px;padding:15px 18px;
+  backdrop-filter:blur(12px);box-shadow:0 12px 30px -10px rgba(0,0,0,.55);font-size:13px;font-weight:600}
+.legend-box span{display:flex;align-items:center;gap:10px;color:#d5dbe8}
+.lg-dot{width:11px;height:11px;border-radius:99px;background:var(--c);box-shadow:0 0 8px var(--c);flex:none}
+/* minimap sits below legend */
+.minimap{bottom:14px;top:auto}

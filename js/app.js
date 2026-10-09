@@ -177,7 +177,7 @@
         <button id="zfit" title="Fit to screen">\u29C9</button>
         <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Click a node \u00B7 <b>Ctrl+K</b> search</span>
       </div>
-      <div class="legend">
+      <div class="legend-box">
         <span><i class="lg-dot" style="--c:#a78bfa"></i>Personal recommendation</span>
         <span><i class="lg-dot" style="--c:#4ade80"></i>Alternative path</span>
         <span><i class="lg-dot" style="--c:#8b93a9"></i>Optional</span>
@@ -210,6 +210,8 @@
     $("progTotal").textContent = pr.total;
     $("ringFg").style.strokeDashoffset = 119.4 * (1 - pr.pct / 100);
     state.pz = Engine.panZoom(svg, state.rendered.vp, state.rendered.W, state.rendered.H, updMm);
+    const r0 = state.rendered.nodes[0];
+    state.pz.home(r0._x + Engine.NW / 2 + 40, r0._y + Engine.NH / 2 + 40);
     requestAnimationFrame(() => state.pz.fit());
     if (state.pendingNode && state.pendingNode.rmId === rm.id) {
       const t = state.pendingNode.title;

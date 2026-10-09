@@ -1,6 +1,6 @@
 /* Atlas engine: tidy tree layout + SVG renderer + pan/zoom */
 const Engine = (() => {
-  const NW = 232, NH = 88, HGAP = 46, VGAP = 96;
+  const NW = 260, NH = 58, HGAP = 64, VGAP = 72;
 
   // flatten nested tree, assign ids
   function flatten(root) {
@@ -70,7 +70,8 @@ const Engine = (() => {
         const my = (y1 + y2) / 2;
         const p = document.createElementNS(NS, "path");
         p.setAttribute("d", `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`);
-        p.setAttribute("class", "edge");
+        const ctag = tagFor ? tagFor(c) : null;
+        p.setAttribute("class", "edge" + (ctag === "opt" ? " opt" : ""));
         p.style.setProperty("--rc", roadmap.color);
         eg.appendChild(p);
         edges.push({ child: c._id, el: p });
@@ -92,13 +93,12 @@ const Engine = (() => {
       const div = document.createElementNS(XNS, "div");
       const tag = tagFor ? tagFor(n) : null;
       if (tag) n._tag = tag;
-      div.setAttribute("class", "anode" + (done ? " done" : "") + (tag ? " tag-" + tag : ""));
+      div.setAttribute("class", "anode" + (n._depth === 0 ? " root" : "") + (done ? " done" : "") + (tag ? " tag-" + tag : ""));
       div.setAttribute("data-nid", n._id);
       div.style.setProperty("--rc", roadmap.color);
       const res = (n.res || []).length;
       div.style.animationDelay = Math.min(n._depth * 110 + (n._slot % 7) * 45, 900) + "ms";
-      div.innerHTML = `<span class="a-dot"></span>
-        <span class="a-t">${escapeHtml(n.t)}</span>
+      div.innerHTML = `<span class="a-t">${escapeHtml(n.t)}</span>
         <span class="a-meta">${done ? "\u2713 done" : (kids ? kids + " steps" : (res ? res + " resources" : ""))}</span>`;
       div.addEventListener("click", () => onNode(n._id));
       fo.appendChild(div);
@@ -122,11 +122,13 @@ const Engine = (() => {
       vp.setAttribute("transform", `translate(${tx},${ty}) scale(${scale})`);
       if (onChange) onChange({ scale, tx, ty });
     };
+    let hx = W / 2, hy = 60;
     function fit() {
       const r = svg.getBoundingClientRect();
-      scale = Math.min(r.width / W, r.height / H, 1) * 0.96;
-      tx = (r.width - W * scale) / 2;
-      ty = 24;
+      const fs = Math.min(r.width / W, r.height / H);
+      scale = Math.min(1, Math.max(fs, 0.62));
+      tx = r.width / 2 - hx * scale;
+      ty = Math.max(20, r.height * 0.14 - hy * scale);
       apply();
     }
     let drag = null, moved = 0, wasDrag = false;
@@ -165,6 +167,7 @@ const Engine = (() => {
     }, { passive: false });
     return {
       fit,
+      home(cx, cy) { hx = cx; hy = cy; },
       zoomIn: () => { scale = Math.min(2.2, scale * 1.25); apply(); },
       zoomOut: () => { scale = Math.max(0.25, scale / 1.25); apply(); },
       centerOn: (cx, cy) => {
