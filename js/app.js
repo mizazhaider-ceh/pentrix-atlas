@@ -27,8 +27,42 @@
     return { done, total: nodes.length, pct: nodes.length ? Math.round(done / nodes.length * 100) : 0 };
   }
 
+  // ---------- toast ----------
+  function toast(html, ms) {
+    let box = document.getElementById("toasts");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "toasts";
+      document.body.appendChild(box);
+    }
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.innerHTML = html;
+    box.appendChild(t);
+    requestAnimationFrame(() => t.classList.add("show"));
+    setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 400); }, ms || 2600);
+  }
+
+  function totalDone() {
+    const p = getProgress();
+    let c = 0;
+    ROADMAPS.forEach(rm => {
+      (function walk(n) { if (p[rm.id + ":" + n._id]) c++; (n.children || []).forEach(walk); })(rm.root);
+    });
+    return c;
+  }
+
+  function updateLvlChip() {
+    const chip = document.getElementById("lvlChip");
+    if (!chip || typeof Game === "undefined") return;
+    const li = Game.levelInfo();
+    chip.textContent = "Lv " + li.lvl + " " + li.title;
+    chip.title = li.xp + " XP";
+  }
+
   // ---------- router ----------
   function route() {
+    updateLvlChip();
     const h = location.hash || "#/";
     const m = h.match(/^#\/r\/([\w-]+)/);
     closeDrawer();
@@ -36,6 +70,7 @@
       const rm = ROADMAPS.find(r => r.id === m[1]);
       if (rm) return viewRoadmap(rm);
     }
+    if (h === "#/dashboard") return viewDashboard();
     viewHome();
   }
 
@@ -119,6 +154,9 @@
 
   function viewRoadmap(rm) {
     state.roadmap = rm;
+    if (typeof Game !== "undefined") {
+      Game.visit(rm.id).forEach(a => toast(a.icon + " <b>" + esc(a.t) + "</b><span>Achievement unlocked</span>"));
+    }
     $("app").innerHTML = `
     <div class="rm-top wrap">
       <nav class="crumb"><a href="#/">Atlas</a><span>/</span><span>${esc(rm.title)}</span></nav>
@@ -210,6 +248,21 @@
     $("drX").addEventListener("click", closeDrawer);
     $("drDone").addEventListener("click", () => {
       const now = toggleDone(rm.id, nid);
+      if (now && typeof Game !== "undefined") {
+        const r = Game.award(10, totalDone());
+        toast("<b>+10 XP</b>");
+        if (r.leveled) {
+          const li = Game.levelInfo();
+          toast("\u{1F31F} <b>Level " + r.level + ": " + esc(li.title) + "</b><span>Keep climbing</span>", 3400);
+        }
+        r.unlocked.forEach(a => toast(a.icon + " <b>" + esc(a.t) + "</b><span>Achievement unlocked</span>", 3400));
+        const pr2 = roadmapProgress(rm);
+        if (pr2.pct === 100) {
+          const fa = Game.grant("finisher");
+          if (fa) toast(fa.icon + " <b>" + esc(fa.t) + "</b><span>You finished " + esc(rm.title) + "</span>", 3800);
+        }
+        updateLvlChip();
+      }
       const elN = state.rendered.byId[nid];
       if (elN && elN._el) elN._el.classList.toggle("done", now);
       const eg = state.rendered.edges.find(e => e.child === nid);
@@ -244,6 +297,58 @@
     if (!d || d.hidden) return;
     d.classList.remove("open");
     setTimeout(() => { d.hidden = true; }, 280);
+  }
+
+  // ================= VIEW: DASHBOARD =================
+  function viewDashboard() {
+    state.roadmap = null;
+    const li = Game.levelInfo();
+    const wk = Game.week();
+    const maxXp = Math.max(10, ...wk.map(d => d.xp));
+    const achHtml = Game.ACH.map(a => {
+      const has = li.g.ach.includes(a.id);
+      return `<div class="ach${has ? " got" : ""}"><span class="ach-i">${a.icon}</span>
+        <b>${esc(a.t)}</b><span>${esc(a.d)}</span></div>`;
+    }).join("");
+    const rmHtml = ROADMAPS.map(rm => {
+      const pr = roadmapProgress(rm);
+      return `<a class="dash-rm" href="#/r/${rm.id}" style="--rc:${rm.color}">
+        <span class="rm-icon sm">${rm.icon}</span>
+        <span class="dash-rm-t">${esc(rm.title)}</span>
+        <span class="rm-bar"><i style="width:${pr.pct}%"></i></span>
+        <b>${pr.pct}%</b></a>`;
+    }).join("");
+    const weekHtml = wk.map(d => `
+      <div class="wk-d${d.today ? " today" : ""}">
+        <div class="wk-bar"><i style="height:${Math.round(d.xp / maxXp * 100)}%"></i></div>
+        <span>${d.label}</span><b>${d.xp}</b>
+      </div>`).join("");
+    $("app").innerHTML = `
+    <main class="wrap dash">
+      <nav class="crumb"><a href="#/">Atlas</a><span>/</span><span>Dashboard</span></nav>
+      <header class="dash-hero">
+        <div class="lvl-badge"><b>${li.lvl}</b><span>LVL</span></div>
+        <div class="dash-id">
+          <span class="eyebrow sm">${esc(li.title)}</span>
+          <h2>Your journey</h2>
+          <div class="xp-bar"><i style="width:${li.pct}%"></i></div>
+          <div class="xp-t">${li.xp} XP <span>· ${li.next - li.xp} to level ${li.lvl + 1}</span></div>
+        </div>
+        <div class="dash-streak"><span>\u{1F525}</span><b>${li.g.streak}</b><span>day streak</span></div>
+      </header>
+      <div class="dash-stats">
+        <div class="dstat"><b>${totalDone()}</b><span>nodes done</span></div>
+        <div class="dstat"><b>${li.g.xp}</b><span>total XP</span></div>
+        <div class="dstat"><b>${li.g.ach.length}/${Game.ACH.length}</b><span>achievements</span></div>
+        <div class="dstat"><b>${li.g.visited.length}</b><span>maps explored</span></div>
+      </div>
+      <h3 class="sec-h">\u{1F3C6} Achievements</h3>
+      <div class="ach-grid">${achHtml}</div>
+      <h3 class="sec-h">\u{1F5FA}\uFE0F Your maps</h3>
+      <div class="dash-rms">${rmHtml}</div>
+      <h3 class="sec-h">\u{1F4CA} This week</h3>
+      <div class="week">${weekHtml}</div>
+    </main>`;
   }
 
   // ---------- boot ----------
