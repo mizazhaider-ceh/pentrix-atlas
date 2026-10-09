@@ -5,6 +5,7 @@
   --rc:#2dd4bf; --r:18px; --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:-2;
@@ -298,8 +299,8 @@ body::after{content:"";position:fixed;inset:-20%;z-index:-1;opacity:.55;pointer-
 .hbtn.on{border-color:#2dd4bf;color:#2dd4bf;background:rgba(45,212,191,.1)}
 /* share modal */
 #shareOv{position:fixed;inset:0;z-index:300;background:rgba(4,6,12,.7);backdrop-filter:blur(8px);
-  display:grid;place-items:center;opacity:0;transition:.3s;padding:20px}
-#shareOv.open{opacity:1}
+  display:grid;place-items:center;opacity:0;transition:.3s;padding:20px;pointer-events:none}
+#shareOv.open{opacity:1;pointer-events:auto}
 .share-card{width:min(640px,94vw);background:rgba(12,15,25,.97);border:1px solid var(--border);border-radius:22px;
   padding:30px;position:relative;transform:translateY(16px);transition:.3s;max-height:92vh;overflow-y:auto}
 #shareOv.open .share-card{transform:none}
@@ -310,8 +311,8 @@ body::after{content:"";position:fixed;inset:-20%;z-index:-1;opacity:.55;pointer-
 /* ================= v6: palette, shortcuts, tags, legend ================= */
 /* command palette */
 #palette{position:fixed;inset:0;z-index:400;background:rgba(4,6,12,.6);backdrop-filter:blur(6px);
-  display:grid;justify-items:center;align-items:start;padding:12vh 20px 20px;opacity:0;transition:.2s}
-#palette.open{opacity:1}
+  display:grid;justify-items:center;align-items:start;padding:12vh 20px 20px;opacity:0;transition:.2s;pointer-events:none}
+#palette.open{opacity:1;pointer-events:auto}
 .pal-box{width:min(600px,94vw);background:rgba(13,17,29,.98);border:1px solid var(--border);border-radius:20px;
   overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6);transform:translateY(-10px) scale(.98);transition:.25s}
 #palette.open .pal-box{transform:none}
@@ -330,8 +331,8 @@ body::after{content:"";position:fixed;inset:-20%;z-index:-1;opacity:.55;pointer-
 .pal-foot b{color:var(--text)}
 /* shortcuts overlay */
 #shortcuts{position:fixed;inset:0;z-index:400;background:rgba(4,6,12,.6);backdrop-filter:blur(6px);
-  display:grid;place-items:center;padding:20px;opacity:0;transition:.2s}
-#shortcuts.open{opacity:1}
+  display:grid;place-items:center;padding:20px;opacity:0;transition:.2s;pointer-events:none}
+#shortcuts.open{opacity:1;pointer-events:auto}
 .sc-box{width:min(440px,94vw);background:rgba(13,17,29,.98);border:1px solid var(--border);border-radius:20px;
   padding:30px;position:relative}
 .sc-box h3{font-size:20px;margin-bottom:18px}
