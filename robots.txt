@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mizazhaider-ceh.github.io/pentrix-atlas/sitemap.xml

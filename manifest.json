@@ -1,0 +1,18 @@
+{
+  "name": "Atlas by The PenTrix",
+  "short_name": "Atlas",
+  "description": "Interactive visual roadmaps for every skill. Every skill has a path. Atlas draws it.",
+  "start_url": "https://mizazhaider-ceh.github.io/pentrix-atlas/",
+  "scope": "https://mizazhaider-ceh.github.io/pentrix-atlas/",
+  "display": "standalone",
+  "background_color": "#06080e",
+  "theme_color": "#06080e",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

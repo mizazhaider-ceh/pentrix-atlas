@@ -175,7 +175,12 @@
         <button id="zin" title="Zoom in">+</button>
         <button id="zout" title="Zoom out">\u2212</button>
         <button id="zfit" title="Fit to screen">\u29C9</button>
-        <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Click a node</span>
+        <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Click a node \u00B7 <b>Ctrl+K</b> search</span>
+      </div>
+      <div class="legend">
+        <span><i class="lg-dot" style="--c:#a78bfa"></i>Personal recommendation</span>
+        <span><i class="lg-dot" style="--c:#4ade80"></i>Alternative path</span>
+        <span><i class="lg-dot" style="--c:#8b93a9"></i>Optional</span>
       </div>
     </div>
     <div class="map-wrap"><svg id="map" style="--rc:${rm.color}"></svg>
@@ -185,7 +190,7 @@
       <div class="dr-in" id="drIn"></div>
     </div>`;
     const svg = $("map");
-    state.rendered = Engine.render(svg, rm, {}, nid => openDrawer(rm, nid));
+    state.rendered = Engine.render(svg, rm, {}, nid => openDrawer(rm, nid), n => tagFor(rm, n));
     paintProgress(rm);
     markNext(rm);
     const mm = Engine.minimap($("minimap"), state.rendered, rm.color);
@@ -206,6 +211,14 @@
     $("ringFg").style.strokeDashoffset = 119.4 * (1 - pr.pct / 100);
     state.pz = Engine.panZoom(svg, state.rendered.vp, state.rendered.W, state.rendered.H, updMm);
     requestAnimationFrame(() => state.pz.fit());
+    if (state.pendingNode && state.pendingNode.rmId === rm.id) {
+      const t = state.pendingNode.title;
+      state.pendingNode = null;
+      setTimeout(() => {
+        const f = state.rendered.nodes.find(n => n.t === t);
+        if (f) openDrawer(rm, f._id);
+      }, 350);
+    }
     $("zin").addEventListener("click", () => state.pz.zoomIn());
     $("zout").addEventListener("click", () => state.pz.zoomOut());
     $("zfit").addEventListener("click", () => state.pz.fit());
@@ -228,6 +241,7 @@
       <div class="dr-band" style="--rc:${rm.color}"></div>
       <span class="eyebrow sm" style="--rc:${rm.color}">${esc(rm.title)}</span>
       <h3>${esc(n.t)}</h3>
+      ${n._tag && TAG_META[n._tag] ? `<div class="tag-banner tag-${n._tag}">${TAG_META[n._tag].icon} <b>${TAG_META[n._tag].t}</b><span>${TAG_META[n._tag].d}</span></div>` : ""}
       ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
       <p class="dr-d">${esc(n.d || "")}</p>
       <button class="btn-done${done ? " on" : ""}" id="drDone">${done ? "\u2713 Completed" : "\u2713 Mark complete"}</button>
@@ -563,10 +577,160 @@
     if (sb) sb.addEventListener("click", openShare);
   }
 
+  // ================= v6: opinion badges =================
+  // rec = personal recommendation, alt = alternative path, opt = optional
+  const TAGS = {
+    "cyber-security::Linux Command Line":"rec", "cyber-security::Python":"rec",
+    "cyber-security::Nmap Scanning":"rec", "cyber-security::Burp Suite":"rec",
+    "cyber-security::Wireshark":"opt", "cyber-security::Bash Scripting":"opt",
+    "cyber-security::Metasploit Framework":"alt",
+    "frontend::CSS":"rec", "frontend::React":"rec", "frontend::TypeScript":"rec",
+    "backend::REST APIs":"rec", "backend::SQL Databases":"rec", "backend::Docker Basics":"opt",
+    "devops::CI/CD: GitHub Actions":"rec", "devops::Docker":"rec", "devops::Kubernetes":"opt",
+    "python::FastAPI":"rec", "python::Automation Scripts":"rec",
+    "linux::Bash Scripting":"rec", "linux::Files & Permissions":"rec",
+    "bug-bounty::Recon at Scale":"rec", "bug-bounty::Report Writing":"rec",
+    "bug-bounty::IDOR & Access Control":"rec",
+    "networking::IP & Subnetting":"rec", "networking::Wireshark Mastery":"rec",
+    "cloud::IAM Deep Dive":"rec", "cloud::Common Misconfigurations":"rec",
+  };
+  const TAG_META = {
+    rec:{ icon:"\u2605", t:"Personal recommendation", d:"The maintainers' pick. Do this." },
+    alt:{ icon:"\u25C8", t:"Alternative path", d:"Another valid way to go." },
+    opt:{ icon:"\u25CB", t:"Optional", d:"Skip if you are in a hurry." },
+  };
+  function tagFor(rm, n) { return TAGS[rm.id + "::" + n.t] || null; }
+
+  // ================= v6: command palette =================
+  let palIndex = [];
+  function buildPalIndex() {
+    const items = [
+      { t:"Home", sub:"Atlas", go:"#/" },
+      { t:"Dashboard", sub:"Your progress", go:"#/dashboard" },
+      { t:"Community", sub:"Vote on roadmaps", go:"#/community" },
+    ];
+    ROADMAPS.forEach(rm => {
+      items.push({ t:rm.title, sub:"Roadmap", go:"#/r/" + rm.id });
+      (function walk(n) {
+        items.push({ t:n.t, sub:rm.title, go:"#/r/" + rm.id, node:n.t, rmId:rm.id });
+        (n.children || []).forEach(walk);
+      })(rm.root);
+    });
+    palIndex = items;
+  }
+  function openPalette() {
+    const p = document.getElementById("palette");
+    if (!p) return;
+    if (!palIndex.length) buildPalIndex();
+    p.hidden = false;
+    requestAnimationFrame(() => p.classList.add("open"));
+    const inp = document.getElementById("palInput");
+    inp.value = "";
+    renderPal("");
+    setTimeout(() => inp.focus(), 30);
+  }
+  function closePalette() {
+    const p = document.getElementById("palette");
+    if (!p || p.hidden) return;
+    p.classList.remove("open");
+    setTimeout(() => { p.hidden = true; }, 200);
+  }
+  let palActive = 0, palShown = [];
+  function renderPal(q) {
+    const list = document.getElementById("palList");
+    q = q.trim().toLowerCase();
+    palShown = (q ? palIndex.filter(i =>
+      i.t.toLowerCase().includes(q) || i.sub.toLowerCase().includes(q)
+    ) : palIndex.filter(i => !i.node)).slice(0, 14);
+    palActive = 0;
+    list.innerHTML = palShown.map((i, ix) => `
+      <button class="pal-item${ix === 0 ? " active" : ""}" data-ix="${ix}">
+        <span class="pal-t">${esc(i.t)}</span><span class="pal-s">${esc(i.sub)}</span>
+        ${i.node ? '<span class="pal-k">skill</span>' : '<span class="pal-k">go</span>'}
+      </button>`).join("") || '<div class="pal-empty">No matches. Try another term.</div>';
+    list.querySelectorAll(".pal-item").forEach(b => b.addEventListener("click", () => palGo(+b.dataset.ix)));
+  }
+  function palGo(ix) {
+    const i = palShown[ix];
+    if (!i) return;
+    closePalette();
+    if (i.node) state.pendingNode = { rmId: i.rmId, title: i.node };
+    location.hash = i.go;
+    if (!i.node && location.hash === i.go) route();
+  }
+  function wirePalette() {
+    const p = document.getElementById("palette");
+    if (!p) return;
+    const inp = document.getElementById("palInput");
+    inp.addEventListener("input", () => renderPal(inp.value));
+    inp.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); palActive = Math.min(palActive + 1, palShown.length - 1); paintPalActive(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); palActive = Math.max(palActive - 1, 0); paintPalActive(); }
+      else if (e.key === "Enter") { palGo(palActive); }
+      else if (e.key === "Escape") { closePalette(); }
+    });
+    p.addEventListener("click", e => { if (e.target === p) closePalette(); });
+  }
+  function paintPalActive() {
+    document.querySelectorAll(".pal-item").forEach((b, ix) => b.classList.toggle("active", ix === palActive));
+    const a = document.querySelector(".pal-item.active");
+    if (a) a.scrollIntoView({ block:"nearest" });
+  }
+
+  // ================= v6: global shortcuts =================
+  function wireShortcuts() {
+    wirePalette();
+    document.addEventListener("keydown", e => {
+      const tag = (e.target.tagName || "").toLowerCase();
+      const typing = tag === "input" || tag === "textarea";
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const p = document.getElementById("palette");
+        (p && !p.hidden) ? closePalette() : openPalette();
+        return;
+      }
+      if (typing) return;
+      if (e.key === "Escape") { closePalette(); closeShortcuts(); return; }
+      if (e.key === "?") { openShortcuts(); return; }
+      if (state.roadmap && state.pz) {
+        if (e.key === "+" || e.key === "=") state.pz.zoomIn();
+        else if (e.key === "-") state.pz.zoomOut();
+        else if (e.key === "0" || e.key.toLowerCase() === "f") state.pz.fit();
+      }
+    });
+    const scx = document.getElementById("scX");
+    if (scx) scx.addEventListener("click", closeShortcuts);
+    const sc = document.getElementById("shortcuts");
+    if (sc) sc.addEventListener("click", e => { if (e.target === sc) closeShortcuts(); });
+  }
+  function openShortcuts() {
+    const sc = document.getElementById("shortcuts");
+    if (!sc) return;
+    sc.hidden = false;
+    requestAnimationFrame(() => sc.classList.add("open"));
+  }
+  function closeShortcuts() {
+    const sc = document.getElementById("shortcuts");
+    if (!sc || sc.hidden) return;
+    sc.classList.remove("open");
+    setTimeout(() => { sc.hidden = true; }, 200);
+  }
+
+  // ================= v6: PWA =================
+  function initPwa() {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
+    }
+  }
+
   // ---------- boot ----------
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") closeDrawer();
   });
   window.addEventListener("hashchange", route);
+  wireShortcuts();
+  initPwa();
   route();
 })();

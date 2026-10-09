@@ -31,7 +31,7 @@ const Engine = (() => {
     return roots;
   }
 
-  function render(svg, roadmap, progress, onNode) {
+  function render(svg, roadmap, progress, onNode, tagFor) {
     const NS = "http://www.w3.org/2000/svg";
     const XNS = "http://www.w3.org/1999/xhtml";
     while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -90,7 +90,9 @@ const Engine = (() => {
       fo.setAttribute("width", NW);
       fo.setAttribute("height", NH);
       const div = document.createElementNS(XNS, "div");
-      div.setAttribute("class", "anode" + (done ? " done" : ""));
+      const tag = tagFor ? tagFor(n) : null;
+      if (tag) n._tag = tag;
+      div.setAttribute("class", "anode" + (done ? " done" : "") + (tag ? " tag-" + tag : ""));
       div.setAttribute("data-nid", n._id);
       div.style.setProperty("--rc", roadmap.color);
       const res = (n.res || []).length;

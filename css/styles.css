@@ -306,3 +306,51 @@ body::after{content:"";position:fixed;inset:-20%;z-index:-1;opacity:.55;pointer-
 .share-card h3{font-size:22px;margin-bottom:6px}
 .share-prev{margin:18px 0;border:1px solid var(--border);border-radius:14px;overflow:hidden}
 .share-btns{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ================= v6: palette, shortcuts, tags, legend ================= */
+/* command palette */
+#palette{position:fixed;inset:0;z-index:400;background:rgba(4,6,12,.6);backdrop-filter:blur(6px);
+  display:grid;justify-items:center;align-items:start;padding:12vh 20px 20px;opacity:0;transition:.2s}
+#palette.open{opacity:1}
+.pal-box{width:min(600px,94vw);background:rgba(13,17,29,.98);border:1px solid var(--border);border-radius:20px;
+  overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6);transform:translateY(-10px) scale(.98);transition:.25s}
+#palette.open .pal-box{transform:none}
+#palInput{width:100%;padding:18px 22px;background:transparent;border:none;border-bottom:1px solid var(--border);
+  color:var(--text);font-size:16px;outline:none;font-family:inherit}
+#palList{max-height:380px;overflow-y:auto;padding:8px}
+.pal-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border:none;
+  background:transparent;color:var(--text);border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px}
+.pal-item.active,.pal-item:hover{background:rgba(45,212,191,.1)}
+.pal-t{font-weight:700;flex:1}
+.pal-s{font-size:12px;color:var(--muted)}
+.pal-k{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#2dd4bf;
+  border:1px solid rgba(45,212,191,.4);padding:3px 8px;border-radius:99px}
+.pal-empty{padding:26px;text-align:center;color:var(--muted);font-size:14px}
+.pal-foot{display:flex;gap:18px;padding:12px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.pal-foot b{color:var(--text)}
+/* shortcuts overlay */
+#shortcuts{position:fixed;inset:0;z-index:400;background:rgba(4,6,12,.6);backdrop-filter:blur(6px);
+  display:grid;place-items:center;padding:20px;opacity:0;transition:.2s}
+#shortcuts.open{opacity:1}
+.sc-box{width:min(440px,94vw);background:rgba(13,17,29,.98);border:1px solid var(--border);border-radius:20px;
+  padding:30px;position:relative}
+.sc-box h3{font-size:20px;margin-bottom:18px}
+.sc-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px}
+.sc-row:last-child{border:none}
+.sc-row span:first-child{color:var(--muted)}
+.sc-row b{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:3px 9px;
+  font-family:monospace;font-size:12.5px;color:var(--text)}
+/* opinion tags + legend */
+.anode.tag-rec .a-dot{background:#a78bfa;box-shadow:0 0 10px #a78bfa}
+.anode.tag-alt .a-dot{background:#4ade80;box-shadow:0 0 10px #4ade80}
+.anode.tag-opt{opacity:.82}
+.anode.tag-opt .a-dot{background:#8b93a9}
+.tag-banner{display:flex;align-items:center;gap:10px;font-size:13px;border-radius:12px;padding:11px 15px;margin-bottom:16px}
+.tag-banner b{font-weight:800}
+.tag-banner span{color:var(--muted)}
+.tag-banner.tag-rec{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.45);color:#d8ccff}
+.tag-banner.tag-alt{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.4);color:#bbf7d0}
+.tag-banner.tag-opt{background:rgba(139,147,169,.08);border:1px solid rgba(139,147,169,.35);color:#c3c9da}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin:2px 0 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:8px}
+.lg-dot{width:10px;height:10px;border-radius:99px;background:var(--c);box-shadow:0 0 8px var(--c);display:inline-block}

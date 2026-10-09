@@ -6,10 +6,26 @@
   <title>Atlas by The PenTrix — Interactive Roadmaps for Every Skill</title>
   <meta name="description" content="Atlas by The PenTrix: interactive visual roadmaps for developers, hackers and the endlessly curious. Every skill has a path. Atlas draws it.">
   <meta name="theme-color" content="#06080e">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Atlas by The PenTrix">
+  <meta property="og:title" content="Atlas by The PenTrix — Interactive Roadmaps for Every Skill">
+  <meta property="og:description" content="Visual, interactive roadmaps for developers, hackers and the endlessly curious. Click any node, learn it, mark it done. Free forever.">
+  <meta property="og:url" content="https://mizazhaider-ceh.github.io/pentrix-atlas/">
+  <meta property="og:image" content="https://mizazhaider-ceh.github.io/pentrix-atlas/icon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Atlas by The PenTrix — Interactive Roadmaps for Every Skill">
+  <meta name="twitter:description" content="Every skill has a path. Atlas draws it.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"Atlas by The PenTrix",
+   "url":"https://mizazhaider-ceh.github.io/pentrix-atlas/",
+   "description":"Interactive visual roadmaps for every skill."}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=5">
+  <link rel="stylesheet" href="css/styles.css?v=6">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
 </head>
 <body>
@@ -26,6 +42,26 @@
 
   <div id="app"></div>
 
+  <div id="palette" hidden>
+    <div class="pal-box">
+      <input id="palInput" placeholder="Search roadmaps, skills, pages..." autocomplete="off">
+      <div id="palList"></div>
+      <div class="pal-foot"><span><b>↑↓</b> navigate</span><span><b>↵</b> open</span><span><b>esc</b> close</span></div>
+    </div>
+  </div>
+
+  <div id="shortcuts" hidden>
+    <div class="sc-box">
+      <button class="dr-x" id="scX">\u2715</button>
+      <h3>Keyboard shortcuts</h3>
+      <div class="sc-row"><span><b>Ctrl</b> + <b>K</b></span><span>Command palette</span></div>
+      <div class="sc-row"><span><b>?</b></span><span>This help</span></div>
+      <div class="sc-row"><span><b>+</b> / <b>-</b></span><span>Zoom roadmap</span></div>
+      <div class="sc-row"><span><b>0</b> or <b>F</b></span><span>Fit roadmap to screen</span></div>
+      <div class="sc-row"><span><b>Esc</b></span><span>Close panels</span></div>
+    </div>
+  </div>
+
   <footer>
     <div class="wrap foot-in">
       <a class="brand" href="#/"><span class="lg">🧭</span> Atlas <small>by The PenTrix</small></a>
@@ -33,10 +69,10 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=5"></script>
-  <script src="js/engine.js?v=5"></script>
-  <script src="js/depth.js?v=5"></script>
-  <script src="js/game.js?v=5"></script>
-  <script src="js/app.js?v=5"></script>
+  <script src="js/data.js?v=6"></script>
+  <script src="js/engine.js?v=6"></script>
+  <script src="js/depth.js?v=6"></script>
+  <script src="js/game.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
 </body>
 </html>
