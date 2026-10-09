@@ -6,25 +6,33 @@
 
   const state = { roadmap: null, rendered: null, pz: null };
 
+  // v19: tri-state progress — done | learning | skipped (migrates old booleans)
   function getProgress() {
-    try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; }
+    let p = {};
+    try { p = JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) {}
+    let dirty = false;
+    Object.keys(p).forEach(k => { if (p[k] === true || p[k] === 1) { p[k] = "done"; dirty = true; } });
+    if (dirty) saveProgress(p);
+    return p;
   }
   function saveProgress(p) {
     try { localStorage.setItem(LS, JSON.stringify(p)); } catch (e) {}
   }
-  function isDone(rmId, nid) { return !!getProgress()[rmId + ":" + nid]; }
-  function toggleDone(rmId, nid) {
+  function nodeState(rmId, nid) { return getProgress()[rmId + ":" + nid] || null; }
+  function setNodeState(rmId, nid, st) {
     const p = getProgress(), k = rmId + ":" + nid;
-    if (p[k]) delete p[k]; else p[k] = 1;
+    const prev = p[k] || null;
+    if (prev === st) delete p[k]; else if (st) p[k] = st; else delete p[k];
     saveProgress(p);
-    return !!p[k];
+    return p[k] || null;
   }
   function roadmapProgress(rm) {
     const p = getProgress();
     const nodes = [];
     (function walk(n) { nodes.push(n); (n.children || []).forEach(walk); })(rm.root);
-    const done = nodes.filter(n => p[rm.id + ":" + n._id]).length;
-    return { done, total: nodes.length, pct: nodes.length ? Math.round(done / nodes.length * 100) : 0 };
+    const done = nodes.filter(n => p[rm.id + ":" + n._id] === "done").length;
+    const learning = nodes.filter(n => p[rm.id + ":" + n._id] === "learning").length;
+    return { done, learning, total: nodes.length, pct: nodes.length ? Math.round(done / nodes.length * 100) : 0 };
   }
 
   // ---------- confetti ----------
@@ -85,7 +93,7 @@
     const p = getProgress();
     let c = 0;
     ROADMAPS.forEach(rm => {
-      (function walk(n) { if (p[rm.id + ":" + n._id]) c++; (n.children || []).forEach(walk); })(rm.root);
+      (function walk(n) { if (p[rm.id + ":" + n._id] === "done") c++; (n.children || []).forEach(walk); })(rm.root);
     });
     return c;
   }
@@ -188,17 +196,30 @@
   function paintProgress(rm) {
     const p = getProgress();
     state.rendered.nodes.forEach(n => {
-      if (p[rm.id + ":" + n._id]) {
-        if (n._el) n._el.classList.add("done");
-        const e = state.rendered.edges.find(e => e.child === n._id);
-        if (e) e.el.classList.add("done");
-      }
+      const st = p[rm.id + ":" + n._id] || null;
+      refreshNodeVisual(rm, n, st);
     });
+  }
+  function refreshNodeVisual(rm, n, st) {
+    if (!n._el) return;
+    n._el.classList.toggle("done", st === "done");
+    n._el.classList.toggle("learning", st === "learning");
+    n._el.classList.toggle("skipped", st === "skipped");
+    n._el.setAttribute("aria-label", n.t + (st ? ", " + st : ""));
+    const e = state.rendered.edges.find(e => e.child === n._id);
+    if (e) e.el.classList.toggle("done", st === "done");
+    const meta = n._el.querySelector(".a-meta");
+    if (meta) {
+      const kids = (n.children || []).length;
+      const res = (n.res || []).length;
+      const ic = st === "done" ? "\\u2713" : (st === "learning" ? "\\u25D0" : (st === "skipped" ? "\\u2715" : ""));
+      meta.textContent = st ? ic + " " + st : (kids ? kids + " steps" : (res ? res + " resources" : ""));
+    }
   }
 
   function markNext(rm) {
     const p = getProgress();
-    const nxt = state.rendered.nodes.find(n => !p[rm.id + ":" + n._id]);
+    const nxt = state.rendered.nodes.find(n => p[rm.id + ":" + n._id] !== "done");
     if (nxt && nxt._el) {
       nxt._el.classList.add("next");
       const tag = document.createElement("span");
@@ -263,11 +284,20 @@
         zs.style.setProperty("--fill", ((zs.value - 25) / 195 * 100) + "%");
       }
     };
-    $("minimapBox").addEventListener("click", e => {
+    const mmJump = e => {
       const r = $("minimap").getBoundingClientRect();
       const cx = (e.clientX - r.left) / mm.s, cy = (e.clientY - r.top) / mm.s;
       state.pz.centerOn(cx, cy);
+    };
+    let mmDrag = false;
+    $("minimapBox").addEventListener("pointerdown", e => {
+      mmDrag = true;
+      $("minimapBox").setPointerCapture(e.pointerId);
+      mmJump(e);
     });
+    $("minimapBox").addEventListener("pointermove", e => { if (mmDrag) mmJump(e); });
+    $("minimapBox").addEventListener("pointerup", () => { mmDrag = false; });
+    $("minimapBox").addEventListener("pointercancel", () => { mmDrag = false; });
     const pr = roadmapProgress(rm);
     $("ringPct").textContent = pr.pct + "%";
     $("progDone").textContent = pr.done;
@@ -275,7 +305,7 @@
     $("ringFg").style.strokeDashoffset = 119.4 * (1 - pr.pct / 100);
     state.pz = Engine.panZoom(svg, state.rendered.vp, state.rendered.W, state.rendered.H, updMm);
     const r0 = state.rendered.nodes[0];
-    state.pz.home(r0._x + Engine.NW / 2 + 40, r0._y + Engine.NH / 2 + 40);
+    state.pz.home(r0._x + (r0._w || Engine.NW) / 2 + 40, r0._y + Engine.NH / 2 + 40);
     requestAnimationFrame(() => state.pz.fit());
     if (state.pendingNode && state.pendingNode.rmId === rm.id) {
       const t = state.pendingNode.title;
@@ -289,17 +319,23 @@
     $("zout").addEventListener("click", () => state.pz.zoomOut());
     $("zfit").addEventListener("click", () => state.pz.fit());
     $("zpct").addEventListener("click", () => state.pz.setScale(1));
-    $("zsl").addEventListener("input", e => state.pz.setScale(e.target.value / 100));
+    $("zsl").addEventListener("input", e => state.pz.setScale(e.target.value / 100, false));
     window.addEventListener("resize", () => state.pz && state.pz.fit());
   }
 
   function openDrawer(rm, nid) {
     const n = state.rendered.byId[nid];
     if (!n) return;
-    const done = isDone(rm.id, nid);
+    const st0 = nodeState(rm.id, nid);
     const dep = (typeof DEPTH !== "undefined" ? DEPTH[rm.id + "::" + n.t] : null) || {};
     const kids = (n.children || []).map(c =>
       `<button class="kid" data-nid="${c._id}">${esc(c.t)}</button>`).join("");
+    const chain = [];
+    let cc = n._parent;
+    while (cc) { chain.unshift(cc); cc = cc._parent; }
+    const prereqs = chain.map(a => `<button class="kid" data-nid="${a._id}">${esc(a.t)}</button>`).join("");
+    const sibs = n._parent ? (n._parent.children || []).filter(c => c._id !== nid).map(c =>
+      `<button class="kid" data-nid="${c._id}">${esc(c.t)}</button>`).join("") : "";
     const res = (n.res || []).map(r =>
       `<a class="res" href="${esc(r[1])}" target="_blank" rel="noopener">\u{1F517} ${esc(r[0])}</a>`).join("");
     const learn = (dep.l || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
@@ -312,7 +348,12 @@
       ${n._tag && TAG_META[n._tag] ? `<div class="tag-banner tag-${n._tag}">${TAG_META[n._tag].icon} <b>${TAG_META[n._tag].t}</b><span>${TAG_META[n._tag].d}</span></div>` : ""}
       ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
       <p class="dr-d">${esc(n.d || "")}</p>
-      <button class="btn-done${done ? " on" : ""}" id="drDone">${done ? "\u2713 Completed" : "\u2713 Mark complete"}</button>
+      ${prereqs ? `<div class="kids-h">Requires</div><div class="kids prereq-kids">${prereqs}</div>` : ""}
+      <div class="tristate" role="group" aria-label="Mark your status">
+        <button class="ts ${st0 === "learning" ? "on-learning" : ""}" data-st="learning">\u25D0 Learning</button>
+        <button class="ts ${st0 === "done" ? "on-done" : ""}" data-st="done">\u2713 Done</button>
+        <button class="ts ${st0 === "skipped" ? "on-skipped" : ""}" data-st="skipped">\u2715 Skip</button>
+      </div>
       <div class="dr-tabs">
         <button class="dr-tab on" data-tab="learn">Learn</button>
         <button class="dr-tab" data-tab="do">Practice</button>
@@ -321,44 +362,53 @@
       <div class="dr-pane" id="paneLearn">
         ${learn ? `<ul class="dl-learn">${learn}</ul>` : `<p class="muted">Core concepts coming with the description above.</p>`}
         ${kids ? `<div class="kids-h">Continue to</div><div class="kids">${kids}</div>` : ""}
+        ${sibs ? `<div class="kids-h">Related topics</div><div class="kids">${sibs}</div>` : ""}
       </div>
       <div class="dr-pane" id="paneDo" hidden>
         ${todo ? `<ol class="dl-do">${todo}</ol>` : '<p class="muted">Hands-on steps coming soon.</p>'}
       </div>
       <div class="dr-pane" id="paneRes" hidden>${res || '<p class="muted">No links yet.</p>'}</div>
       ${helpfulHtml(rm.id, nid)}`;
+    document.querySelectorAll(".anode.sel").forEach(x => x.classList.remove("sel"));
+    if (n._el) n._el.classList.add("sel");
     $("drawer").hidden = false;
     requestAnimationFrame(() => $("drawer").classList.add("open"));
     $("drX").addEventListener("click", closeDrawer);
-    $("drDone").addEventListener("click", () => {
-      const now = toggleDone(rm.id, nid);
-      if (now && typeof Game !== "undefined") {
-        const r = Game.award(10, totalDone());
-        toast("<b>+10 XP</b>");
-        if (r.leveled) {
-          const li = Game.levelInfo();
-          toast("\u{1F31F} <b>Level " + r.level + ": " + esc(li.title) + "</b><span>Keep climbing</span>", 3400);
+    document.querySelectorAll(".ts").forEach(b => b.addEventListener("click", () => {
+      const now = setNodeState(rm.id, nid, b.dataset.st);
+      document.querySelectorAll(".ts").forEach(x => {
+        x.classList.toggle("on-learning", now === "learning" && x.dataset.st === "learning");
+        x.classList.toggle("on-done", now === "done" && x.dataset.st === "done");
+        x.classList.toggle("on-skipped", now === "skipped" && x.dataset.st === "skipped");
+      });
+      if (typeof Game !== "undefined" && now) {
+        const xp = now === "done" ? 10 : (now === "learning" ? 2 : 0);
+        if (xp) {
+          const r = Game.award(xp, totalDone());
+          toast("<b>+" + xp + " XP</b>");
+          if (r.leveled) {
+            const li = Game.levelInfo();
+            toast("\u{1F31F} <b>Level " + r.level + ": " + esc(li.title) + "</b><span>Keep climbing</span>", 3400);
+          }
+          r.unlocked.forEach(a => toast(a.icon + " <b>" + esc(a.t) + "</b><span>Achievement unlocked</span>", 3400));
         }
-        r.unlocked.forEach(a => toast(a.icon + " <b>" + esc(a.t) + "</b><span>Achievement unlocked</span>", 3400));
-        const pr2 = roadmapProgress(rm);
-        if (pr2.pct === 100) {
-          const fa = Game.grant("finisher");
-          if (fa) {
-            toast(fa.icon + " <b>" + esc(fa.t) + "</b><span>You finished " + esc(rm.title) + "</span>", 3800);
-            confetti();
+        if (now === "done") {
+          const pr2 = roadmapProgress(rm);
+          if (pr2.pct === 100) {
+            const fa = Game.grant("finisher");
+            if (fa) {
+              toast(fa.icon + " <b>" + esc(fa.t) + "</b><span>You finished " + esc(rm.title) + "</span>", 3800);
+              confetti();
+            }
           }
         }
         updateLvlChip();
       }
       const elN = state.rendered.byId[nid];
-      if (elN && elN._el) elN._el.classList.toggle("done", now);
-      const eg = state.rendered.edges.find(e => e.child === nid);
-      if (eg) eg.el.classList.toggle("done", now);
+      if (elN) refreshNodeVisual(rm, elN, now);
       if (state.mm) state.mm.refreshDone();
-      $("drDone").textContent = now ? "\u2713 Completed" : "\u2713 Mark complete";
-      $("drDone").classList.toggle("on", now);
       refreshRoadmapProgress(rm);
-    });
+    }));
     document.querySelectorAll(".dr-tab").forEach(b => b.addEventListener("click", () => {
       document.querySelectorAll(".dr-tab").forEach(x => x.classList.remove("on"));
       b.classList.add("on");
@@ -384,6 +434,7 @@
     const d = $("drawer");
     if (!d || d.hidden) return;
     d.classList.remove("open");
+    document.querySelectorAll(".anode.sel").forEach(x => x.classList.remove("sel"));
     setTimeout(() => { d.hidden = true; }, 280);
   }
 
