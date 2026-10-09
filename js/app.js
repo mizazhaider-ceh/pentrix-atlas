@@ -73,6 +73,30 @@
     })(t0);
   }
 
+  // v20: honest resource categorization - type from URL pattern, access only where factual
+  function resCat(url) {
+    const u = String(url).toLowerCase();
+    if (/portswigger\.net|tryhackme|hackthebox|overthewire|vulnhub|picoctf|root-me/.test(u)) return "lab";
+    if (/developer\.mozilla|wiki\.archlinux|docs\.python|docs\.github|kubernetes\.io\/docs|docs\.aws|docs\.docker|nmap\.org\/book|wireshark\.org\/docs|postgresql\.org\/docs|nodejs\.org|go\.dev\/learn|typescriptlang\.org\/docs|fastapi\.tiangolo|pandas\.pydata|matplotlib\.org|prometheus\.io\/docs|developer\.hashicorp|git-scm\.com\/doc|tldp\.org|curl\.se\/docs|ssh\.com\/academy|crontab\.guru|regex101\.com|sqlbolt\.com|howdns\.works|cidr\.xyz|practicalnetworking|web\.dev\/learn|vite\.dev|vitest\.dev|requests\.readthedocs|redis\.io\/docs|owasp\.org|exploit-db\.com|osintframework|hashcat\.net\/wiki|sudo\.ws\/docs|linux-audit|virtualbox\.org|distrowatch|gnu\.org\/software|linuxjourney\.com/.test(u)) return "official";
+    return "guide";
+  }
+  const RES_CAT_META = {
+    official: { t: "Official documentation", s: "Free to read", icon: "\u2713" },
+    guide: { t: "Tutorials & guides", s: "Check the provider for access", icon: "\u{1F4D6}" },
+    lab: { t: "Hands-on labs", s: "Check the provider for access", icon: "\u2697" }
+  };
+  function resourceLibrary(res) {
+    if (!res.length) return '<p class="muted">No links yet.</p>';
+    const groups = { official: [], guide: [], lab: [] };
+    res.forEach(r => groups[resCat(r[1])].push(r));
+    return ["official", "guide", "lab"].filter(g => groups[g].length).map(g => {
+      const m = RES_CAT_META[g];
+      const items = groups[g].map(r =>
+        `<a class="res" href="${esc(r[1])}" target="_blank" rel="noopener"><span class="res-t">\u{1F517} ${esc(r[0])}</span><span class="res-s">${m.s}</span></a>`).join("");
+      return `<div class="res-group"><div class="res-gh"><span class="res-gi">${m.icon}</span><b>${m.t}</b></div>${items}</div>`;
+    }).join("");
+  }
+
   // ---------- toast ----------
   function toast(html, ms) {
     let box = document.getElementById("toasts");
@@ -340,11 +364,28 @@
       `<a class="res" href="${esc(r[1])}" target="_blank" rel="noopener">\u{1F517} ${esc(r[0])}</a>`).join("");
     const learn = (dep.l || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
     const todo = (dep.d || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
+    const resLib = resourceLibrary(n.res || []);
+    const crumb = chain.map(a => `<button class="crumb" data-nid="${a._id}">${esc(a.t)}</button>`).join('<span class="crumb-sep">' + B + "u203A</span>");
+    const level = n._depth === 0 ? "Overview" : (n._depth === 1 ? "Beginner" : (n._depth === 2 ? "Intermediate" : "Advanced"));
+    const quiz = (typeof QUIZ !== "undefined" ? QUIZ[rm.id + "::" + n.t] : null) || [];
+    const quizHtml = quiz.length ? quiz.map((qq, qi) =>
+      `<div class="q" data-qi="${qi}">
+        <p class="q-t"><b>Q${qi + 1}.</b> ${esc(qq.q)}</p>
+        <div class="q-opts">${qq.o.map((op, oi) => `<button class="q-opt" data-oi="${oi}">${esc(op)}</button>`).join("")}</div>
+        <p class="q-exp" hidden></p>
+      </div>`).join("") + `<div class="q-score" hidden></div><button class="q-retry" hidden>Retake quiz</button>`
+      : `<p class="muted">Knowledge checks for this topic are being written. The Practice tab has hands-on steps meanwhile.</p>`;
     $("drIn").innerHTML = `
       <button class="dr-x" id="drX">\u2715</button>
       <div class="dr-band" style="--rc:${rm.color}"></div>
+      ${crumb ? `<nav class="crumbs" aria-label="Breadcrumb">${crumb}</nav>` : ""}
       <span class="eyebrow sm" style="--rc:${rm.color}">${esc(rm.title)}</span>
       <h3>${esc(n.t)}</h3>
+      <div class="dr-meta">
+        <span class="lvl-pill">${level}</span>
+        ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
+        ${st0 ? `<span class="st-pill st-${st0}">${st0 === "done" ? "\u2713" : (st0 === "learning" ? "\u25D0" : "\u2715")} ${st0}</span>` : ""}
+      </div>
       ${n._tag && TAG_META[n._tag] ? `<div class="tag-banner tag-${n._tag}">${TAG_META[n._tag].icon} <b>${TAG_META[n._tag].t}</b><span>${TAG_META[n._tag].d}</span></div>` : ""}
       ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
       <p class="dr-d">${esc(n.d || "")}</p>
@@ -354,20 +395,29 @@
         <button class="ts ${st0 === "done" ? "on-done" : ""}" data-st="done">\u2713 Done</button>
         <button class="ts ${st0 === "skipped" ? "on-skipped" : ""}" data-st="skipped">\u2715 Skip</button>
       </div>
-      <div class="dr-tabs">
-        <button class="dr-tab on" data-tab="learn">Learn</button>
-        <button class="dr-tab" data-tab="do">Practice</button>
-        <button class="dr-tab" data-tab="res">Resources</button>
+      <div class="ws-h">Learning workspace</div>
+      <div class="ws-grid">
+        <button class="ws-card on" data-tab="learn"><span class="ws-i">\u{1F4D6}</span><b>Learn</b><span>Concepts, commands, mistakes</span></button>
+        <button class="ws-card" data-tab="res"><span class="ws-i">\u{1F517}</span><b>Resources</b><span>Docs, guides, labs</span></button>
+        <button class="ws-card" data-tab="do"><span class="ws-i">\u2697</span><b>Practice</b><span>Safe local exercises</span></button>
+        <button class="ws-card" data-tab="quiz"><span class="ws-i">\u{1F3AF}</span><b>Test yourself</b><span>Quizzes with explanations</span></button>
       </div>
       <div class="dr-pane" id="paneLearn">
-        ${learn ? `<ul class="dl-learn">${learn}</ul>` : `<p class="muted">Core concepts coming with the description above.</p>`}
+        ${learn ? `<div class="kids-h">Learning objectives</div><ul class="dl-learn">${learn}</ul>` : `<p class="muted">Core concepts coming with the description above.</p>`}
         ${kids ? `<div class="kids-h">Continue to</div><div class="kids">${kids}</div>` : ""}
         ${sibs ? `<div class="kids-h">Related topics</div><div class="kids">${sibs}</div>` : ""}
       </div>
       <div class="dr-pane" id="paneDo" hidden>
-        ${todo ? `<ol class="dl-do">${todo}</ol>` : '<p class="muted">Hands-on steps coming soon.</p>'}
+        ${todo ? `<div class="kids-h">Guided practice</div><ol class="dl-do">${todo}</ol>` : '<p class="muted">Hands-on steps coming soon.</p>'}
       </div>
-      <div class="dr-pane" id="paneRes" hidden>${res || '<p class="muted">No links yet.</p>'}</div>
+      <div class="dr-pane" id="paneRes" hidden>
+        <div class="kids-h">Resource library</div>
+        ${resLib}
+      </div>
+      <div class="dr-pane" id="paneQuiz" hidden>
+        <div class="kids-h">Knowledge check</div>
+        <div id="quizBox">${quizHtml}</div>
+      </div>
       ${helpfulHtml(rm.id, nid)}`;
     document.querySelectorAll(".anode.sel").forEach(x => x.classList.remove("sel"));
     if (n._el) n._el.classList.add("sel");
@@ -409,14 +459,44 @@
       if (state.mm) state.mm.refreshDone();
       refreshRoadmapProgress(rm);
     }));
-    document.querySelectorAll(".dr-tab").forEach(b => b.addEventListener("click", () => {
-      document.querySelectorAll(".dr-tab").forEach(x => x.classList.remove("on"));
+    const tabIds = { learn: "paneLearn", do: "paneDo", res: "paneRes", quiz: "paneQuiz" };
+    document.querySelectorAll(".ws-card").forEach(b => b.addEventListener("click", () => {
+      document.querySelectorAll(".ws-card").forEach(x => x.classList.remove("on"));
       b.classList.add("on");
-      ["learn", "do", "res"].forEach(t => {
-        const p = $("pane" + t[0].toUpperCase() + t.slice(1));
+      Object.keys(tabIds).forEach(t => {
+        const p = $(tabIds[t]);
         if (p) p.hidden = b.dataset.tab !== t;
       });
     }));
+    const qbox = $("quizBox");
+    if (qbox && quiz.length) {
+      let score = 0, answered = 0;
+      qbox.querySelectorAll(".q").forEach((qel, qi) => {
+        const qq = quiz[qi];
+        qel.querySelectorAll(".q-opt").forEach(btn => btn.addEventListener("click", () => {
+          if (qel.dataset.done) return;
+          qel.dataset.done = "1";
+          answered++;
+          const ok = +btn.dataset.oi === qq.a;
+          if (ok) score++;
+          qel.querySelectorAll(".q-opt").forEach((b2, bi) => {
+            b2.classList.toggle("q-right", bi === qq.a);
+            b2.classList.toggle("q-wrong", bi === +btn.dataset.oi && !ok);
+            b2.disabled = true;
+          });
+          const exp = qel.querySelector(".q-exp");
+          exp.hidden = false;
+          exp.innerHTML = (ok ? "<b>Correct.</b> " : "<b>Not quite.</b> ") + esc(qq.e);
+          if (answered === quiz.length) {
+            const sc = qbox.querySelector(".q-score");
+            sc.hidden = false;
+            sc.innerHTML = "<b>" + score + "/" + quiz.length + "</b> correct" + (score === quiz.length ? " - flawless." : (score * 2 >= quiz.length ? " - solid. Review the misses." : " - revisit the Learn tab, then retry."));
+            qbox.querySelector(".q-retry").hidden = false;
+          }
+        }));
+      });
+      qbox.querySelector(".q-retry").addEventListener("click", () => openDrawer(rm, nid));
+    }
     document.querySelectorAll(".kid").forEach(b => b.addEventListener("click", () => openDrawer(rm, b.dataset.nid)));
     wireHelpful(rm.id, nid);
   }
