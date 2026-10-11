@@ -15,13 +15,26 @@ const Journey = (() => {
     return depth === 0 ? "Overview" : depth === 1 ? "Beginner" : depth === 2 ? "Intermediate" : "Advanced";
   }
 
+  const LVN = ["", "Basics", "Intermediate", "Advanced"];
   function build(rm, ctx) {
     const esc = ctx.esc;
     const cats = rm.root.children || [];
     const prog = ctx.progress(rm); // {done, total, pct}
+    const lvl = ctx.level || 0; // 0=all, 1/2/3 filter
+    const allTopics = [];
+    cats.forEach(c => (c.children || []).forEach(t => allTopics.push(t)));
+    const lvCount = [0, 0, 0, 0], lvDone = [0, 0, 0, 0];
+    allTopics.forEach(t => {
+      const L = t.lv || 2;
+      lvCount[L]++;
+      if (ctx.nodeState(rm.id, t._id) === "done") lvDone[L]++;
+    });
+    const lvSummary = [1, 2, 3].map(L =>
+      `<span>${LVN[L]} <b>${lvDone[L]}/${lvCount[L]}</b></span>`).join("");
     let step = 0;
     const sections = cats.map((c, ci) => {
-      const topics = c.children || [];
+      const topics = (c.children || []).filter(t => !lvl || (t.lv || 2) === lvl);
+      if (!topics.length) return "";
       const items = topics.map(t => {
         step++;
         const st = ctx.nodeState(rm.id, t._id);
@@ -33,7 +46,7 @@ const Journey = (() => {
         const quizN = ctx.quizCount(t.t);
         const meta = [
           dep.t ? esc(dep.t) : null,
-          levelFor(t._depth || 2),
+          LVN[t.lv] || levelFor(t._depth || 2),
           (t.res || []).length ? (t.res.length + " resources") : null,
           quizN ? quizN + " quiz" : null,
         ].filter(Boolean).join(" <i>·</i> ");
@@ -49,6 +62,7 @@ const Journey = (() => {
       }).join("");
       const doneIn = topics.filter(t => ctx.nodeState(rm.id, t._id) === "done").length;
       const next = cats[ci + 1];
+      if (!items) return "";
       return `<section class="jsec">
         <div class="jsec-head">
           <span class="jsec-num" aria-hidden="true">${String(ci + 1).padStart(2, "0")}</span>
@@ -69,6 +83,7 @@ const Journey = (() => {
         <h3><span class="rm-icon sm">${rm.icon}</span> ${esc(rm.root.t)}</h3>
         <p>${esc(rm.desc || "")}</p>
         <div class="jhero-prog"><span class="jbar big"><i style="width:${prog.pct}%"></i></span><span><b>${prog.done}</b> of ${prog.total} steps · ${prog.pct}%</span></div>
+        <div class="jlevels">${lvSummary}</div>
         <button class="jstart" data-act="continue">Continue journey <span aria-hidden="true">&#8594;</span></button>
       </div>
       ${sections}

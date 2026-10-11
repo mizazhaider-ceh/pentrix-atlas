@@ -271,7 +271,9 @@
           <div class="rm-prog-t"><b id="progDone">0</b> of <b id="progTotal">0</b> done</div>
         </div>
       </div>
-      <div class="view-row"><div class="view-toggle" role="tablist" aria-label="Roadmap view">
+      <div class="view-row"><div class="level-filter" role="tablist" aria-label="Skill level">
+        <button class="lf on" data-lv="0" role="tab">All</button><button class="lf" data-lv="1" role="tab">Basics</button><button class="lf" data-lv="2" role="tab">Intermediate</button><button class="lf" data-lv="3" role="tab">Advanced</button>
+      </div><div class="view-toggle" role="tablist" aria-label="Roadmap view">
         <button class="vt" id="vMap" role="tab">Map</button><button class="vt" id="vJourney" role="tab">Journey</button>
       </div></div>
       <div class="map-ctrl" id="mapCtrl">
@@ -345,11 +347,14 @@
     // v23: Map | Journey view toggle (preference persisted per roadmap)
     state.view = null;
     try { state.view = localStorage.getItem("atlas:view:" + rm.id); } catch (_) {}
-    if (state.view !== "journey") state.view = "map";
+    if (state.view !== "map" && state.view !== "journey") state.view = "journey"; // v24: Journey first
+    state.level = 0;
+    try { state.level = +(localStorage.getItem("atlas:level:" + rm.id) || 0); } catch (_) {}
+    if (![0, 1, 2, 3].includes(state.level)) state.level = 0;
     function mountJourney() {
       const w = $("journeyWrap");
       w.innerHTML = Journey.build(rm, {
-        esc, nodeState, progress: roadmapProgress,
+        esc, nodeState, progress: roadmapProgress, level: state.level,
         depFor: t => (typeof DEPTH !== "undefined" ? DEPTH[rm.id + "::" + t] : null) || {},
         quizCount: t => ((typeof QUIZ !== "undefined" ? QUIZ[rm.id + "::" + t] : null) || []).length,
       });
@@ -368,9 +373,24 @@
       else if (state.pz) state.pz.fitIfFresh();
       window.scrollTo(0, 0);
     }
+    function applyLevel() {
+      document.querySelectorAll(".lf").forEach(b => b.classList.toggle("on", +b.dataset.lv === state.level));
+      try { localStorage.setItem("atlas:level:" + rm.id, state.level); } catch (_) {}
+      if (state.view === "journey") { if (!$("journeyWrap").hidden) mountJourney(); }
+      else if (state.rendered) {
+        state.rendered.nodes.forEach(n => {
+          if (n._el) n._el.classList.toggle("lvl-dim", !!state.level && n._depth > 0 && (n.lv || 2) !== state.level);
+        });
+      }
+    }
+    document.querySelectorAll(".lf").forEach(b => b.addEventListener("click", () => {
+      state.level = +b.dataset.lv; applyLevel();
+    }));
+    state.applyLevel = applyLevel;
     $("vMap").addEventListener("click", () => showView("map"));
     $("vJourney").addEventListener("click", () => showView("journey"));
     showView(state.view);
+    applyLevel();
     $("zin").addEventListener("click", () => state.pz.zoomIn());
     $("zout").addEventListener("click", () => state.pz.zoomOut());
     $("zfit").addEventListener("click", () => state.pz.fit());
@@ -383,7 +403,22 @@
     const n = state.rendered.byId[nid];
     if (!n) return;
     const st0 = nodeState(rm.id, nid);
-    const dep = (typeof DEPTH !== "undefined" ? DEPTH[rm.id + "::" + n.t] : null) || {};
+    const dep0 = (typeof DEPTH !== "undefined" ? DEPTH[rm.id + "::" + n.t] : null) || {};
+    const dep = { t: n.time || dep0.t, l: n.learn || dep0.l || [], d: n.do || dep0.d || [] };
+    const tools = n.tools || [];
+    const tip = n.tip || null;
+    const LVN = ["", "Basics", "Intermediate", "Advanced"];
+    const preChips = (n.pre || []).map(pref => {
+      let target = null;
+      if (typeof pref === "string") target = state.rendered.nodes.find(x => x.t === pref);
+      else if (pref && pref.t) {
+        const r2 = (typeof ROADMAPS !== "undefined" ? ROADMAPS.find(r => r.id === pref.rid) : null) || rm;
+        target = r2 === rm ? state.rendered.nodes.find(x => x.t === pref.t) : { _id: pref.t, _rm: r2.id };
+      }
+      if (!target) return "";
+      const label = (target._rm && target._rm !== rm.id ? target._rm + " / " : "") + esc(typeof pref === "string" ? pref : pref.t);
+      return `<button class="kid pre" data-pre="${esc(target._id)}" data-prm="${esc(target._rm || rm.id)}">${label}</button>`;
+    }).join("");
     const kids = (n.children || []).map(c =>
       `<button class="kid" data-nid="${c._id}">${esc(c.t)}</button>`).join("");
     const chain = [];
@@ -398,7 +433,7 @@
     const todo = (dep.d || []).map(x => `<li><span>${esc(x)}</span></li>`).join("");
     const resLib = resourceLibrary(n.res || []);
     const crumb = chain.map(a => `<button class="crumb" data-nid="${a._id}">${esc(a.t)}</button>`).join('<span class="crumb-sep">›</span>');
-    const level = n._depth === 0 ? "Overview" : (n._depth === 1 ? "Beginner" : (n._depth === 2 ? "Intermediate" : "Advanced"));
+    const level = n._depth === 0 ? "Overview" : (LVN[n.lv] || (n._depth === 1 ? "Beginner" : (n._depth === 2 ? "Intermediate" : "Advanced")));
     const quiz = (typeof QUIZ !== "undefined" ? QUIZ[rm.id + "::" + n.t] : null) || [];
     const quizHtml = quiz.length ? quiz.map((qq, qi) =>
       `<div class="q" data-qi="${qi}">
@@ -421,6 +456,9 @@
       ${n._tag && TAG_META[n._tag] ? `<div class="tag-banner tag-${n._tag}">${TAG_META[n._tag].icon} <b>${TAG_META[n._tag].t}</b><span>${TAG_META[n._tag].d}</span></div>` : ""}
       ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
       <p class="dr-d">${esc(n.d || "")}</p>
+      ${tip ? `<div class="tip-box"><b>Heads up</b><span>${esc(tip)}</span></div>` : ""}
+      ${tools.length ? `<div class="kids-h">Tools</div><div class="tools">${tools.map(t => `<span class="tool-chip">${esc(t)}</span>`).join("")}</div>` : ""}
+      ${preChips ? `<div class="kids-h">Prerequisites</div><div class="kids prereq-kids">${preChips}</div>` : ""}
       ${prereqs ? `<div class="kids-h">Requires</div><div class="kids prereq-kids">${prereqs}</div>` : ""}
       <div class="tristate" role="group" aria-label="Mark your status">
         <button class="ts ${st0 === "learning" ? "on-learning" : ""}" data-st="learning">\u25D0 Learning</button>
@@ -456,6 +494,17 @@
     $("drawer").hidden = false;
     requestAnimationFrame(() => $("drawer").classList.add("open"));
     $("drX").addEventListener("click", closeDrawer);
+    document.querySelectorAll(".kid.pre").forEach(b => b.addEventListener("click", () => {
+      const prm = b.dataset.prm, pid = b.dataset.pre;
+      if (prm && prm !== rm.id) {
+        const r2 = ROADMAPS.find(r => r.id === prm);
+        const t2 = r2 && (function find(ns, t) {
+          for (const x of ns) { if (x.t === t) return x; const f = x.children ? find(x.children, t) : null; if (f) return f; }
+          return null;
+        })([r2.root], pid);
+        if (t2) { location.hash = "#/r/" + prm; state.pendingNode = { rmId: prm, title: t2.t }; }
+      } else openDrawer(rm, pid);
+    }));
     document.querySelectorAll(".ts").forEach(b => b.addEventListener("click", () => {
       const now = setNodeState(rm.id, nid, b.dataset.st);
       document.querySelectorAll(".ts").forEach(x => {
