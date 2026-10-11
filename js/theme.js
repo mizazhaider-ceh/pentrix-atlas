@@ -2,14 +2,14 @@
 (function () {
   "use strict";
   var THEMES = [
-    { id: "obsidian",  name: "Obsidian",  sub: "lime",     sw1: "#ccff00", sw2: "#0a0a0a" },
-    { id: "cyberpunk", name: "Cyberpunk", sub: "neon",     sw1: "#ff2ea6", sw2: "#7df9ff" },
-    { id: "matrix",    name: "Matrix",    sub: "phosphor", sw1: "#00ff66", sw2: "#020a04" },
-    { id: "crimson",   name: "Crimson",   sub: "red team", sw1: "#ff3b4e", sw2: "#0e0507" },
-    { id: "abyss",     name: "Abyss",     sub: "deep blue",sw1: "#38bdf8", sw2: "#030a14" },
-    { id: "sunset",    name: "Sunset",    sub: "amber",    sw1: "#fb923c", sw2: "#120a06" },
-    { id: "arctic",    name: "Arctic",    sub: "light",    sw1: "#4f46e5", sw2: "#eef1f7" },
-    { id: "paper",     name: "Paper",     sub: "light",    sw1: "#c2410c", sw2: "#faf7f0" }
+    { id: "obsidian",  name: "Obsidian",  sub: "glass · lime",   sw1: "#ccff00", sw2: "#0a0a0a" },
+    { id: "cyberpunk", name: "Cyberpunk", sub: "angular neon",   sw1: "#ff2ea6", sw2: "#7df9ff" },
+    { id: "matrix",    name: "Matrix",    sub: "terminal",       sw1: "#00ff66", sw2: "#020a04" },
+    { id: "crimson",   name: "Crimson",   sub: "serif menace",   sw1: "#ff3b4e", sw2: "#0e0507" },
+    { id: "abyss",     name: "Abyss",     sub: "deep calm",      sw1: "#38bdf8", sw2: "#030a14" },
+    { id: "sunset",    name: "Sunset",    sub: "golden hour",    sw1: "#fb923c", sw2: "#120a06" },
+    { id: "arctic",    name: "Arctic",    sub: "swiss minimal",  sw1: "#4f46e5", sw2: "#eef1f7" },
+    { id: "paper",     name: "Paper",     sub: "editorial",      sw1: "#c2410c", sw2: "#faf7f0" }
   ];
   var KEY = "atlas.theme";
 
