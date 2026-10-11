@@ -143,6 +143,10 @@
   }
 
   function route() {
+    if (window.AtlasTheme) { AtlasTheme.transition(routeInner); return; }
+    routeInner();
+  }
+  function routeInner() {
     updateLvlChip();
     const h = location.hash || "#/";
     const m = h.match(/^#\/r\/([\w-]+)/);
