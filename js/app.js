@@ -271,7 +271,10 @@
           <div class="rm-prog-t"><b id="progDone">0</b> of <b id="progTotal">0</b> done</div>
         </div>
       </div>
-      <div class="map-ctrl">
+      <div class="view-row"><div class="view-toggle" role="tablist" aria-label="Roadmap view">
+        <button class="vt" id="vMap" role="tab">Map</button><button class="vt" id="vJourney" role="tab">Journey</button>
+      </div></div>
+      <div class="map-ctrl" id="mapCtrl">
         <button id="zout" title="Zoom out">\u2212</button>
         <button id="zpct" title="Reset zoom">100%</button>
         <button id="zin" title="Zoom in">+</button>
@@ -279,15 +282,16 @@
         <button id="zfit" title="Fit to screen">\u29C9</button>
         <span class="map-hint">Drag to pan \u00B7 Scroll to zoom \u00B7 Double-click to zoom in \u00B7 Click a node</span>
       </div>
-      <div class="legend-box">
+      <div class="legend-box" id="legendBox">
         <span><i class="lg-dot" style="--c:#a78bfa"></i>Personal recommendation</span>
         <span><i class="lg-dot" style="--c:#4ade80"></i>Alternative path</span>
         <span><i class="lg-dot" style="--c:#8b93a9"></i>Optional</span>
       </div>
     </div>
-    <div class="map-wrap"><svg id="map" style="--rc:${rm.color}"></svg>
+    <div class="map-wrap" id="mapWrap"><svg id="map" style="--rc:${rm.color}"></svg>
       <div class="minimap" id="minimapBox" title="Minimap: click to jump"><svg id="minimap"></svg></div>
     </div>
+    <div id="journeyWrap" hidden></div>
     <div class="drawer" id="drawer" hidden>
       <div class="dr-in" id="drIn"></div>
     </div>`;
@@ -338,6 +342,35 @@
         if (f) openDrawer(rm, f._id);
       }, 350);
     }
+    // v23: Map | Journey view toggle (preference persisted per roadmap)
+    state.view = null;
+    try { state.view = localStorage.getItem("atlas:view:" + rm.id); } catch (_) {}
+    if (state.view !== "journey") state.view = "map";
+    function mountJourney() {
+      const w = $("journeyWrap");
+      w.innerHTML = Journey.build(rm, {
+        esc, nodeState, progress: roadmapProgress,
+        depFor: t => (typeof DEPTH !== "undefined" ? DEPTH[rm.id + "::" + t] : null) || {},
+        quizCount: t => ((typeof QUIZ !== "undefined" ? QUIZ[rm.id + "::" + t] : null) || []).length,
+      });
+      Journey.mount(w, rm, { onTopic: nid => openDrawer(rm, nid) });
+    }
+    state.mountJourney = mountJourney;
+    function showView(v) {
+      state.view = v;
+      try { localStorage.setItem("atlas:view:" + rm.id, v); } catch (_) {}
+      $("vMap").classList.toggle("on", v === "map");
+      $("vJourney").classList.toggle("on", v === "journey");
+      const isJ = v === "journey";
+      $("mapWrap").hidden = isJ; $("mapCtrl").hidden = isJ; $("legendBox").hidden = isJ;
+      $("journeyWrap").hidden = !isJ;
+      if (isJ) mountJourney();
+      else if (state.pz) state.pz.fitIfFresh();
+      window.scrollTo(0, 0);
+    }
+    $("vMap").addEventListener("click", () => showView("map"));
+    $("vJourney").addEventListener("click", () => showView("journey"));
+    showView(state.view);
     $("zin").addEventListener("click", () => state.pz.zoomIn());
     $("zout").addEventListener("click", () => state.pz.zoomOut());
     $("zfit").addEventListener("click", () => state.pz.fit());
@@ -514,7 +547,10 @@
     if (!d || d.hidden) return;
     d.classList.remove("open");
     document.querySelectorAll(".anode.sel").forEach(x => x.classList.remove("sel"));
-    setTimeout(() => { d.hidden = true; }, 280);
+    setTimeout(() => {
+      d.hidden = true;
+      if (state.view === "journey" && state.mountJourney && !$("journeyWrap").hidden) state.mountJourney();
+    }, 280);
   }
 
   // ================= COMMUNITY: voting board =================
