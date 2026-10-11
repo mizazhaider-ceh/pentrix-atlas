@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "python",
   "title": "Python",
   "icon": "🐍",
-  "color": "#facc15",
+  "color": "#facc15", "kind": "skill",
   "tagline": "The most versatile language on earth.",
   "desc": "From automation scripts to AI: master Python step by step.",
   "root": {

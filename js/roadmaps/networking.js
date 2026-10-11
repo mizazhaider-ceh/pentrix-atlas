@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "networking",
   "title": "Computer Networking",
   "icon": "🌐",
-  "color": "#38bdf8",
+  "color": "#38bdf8", "kind": "skill",
   "tagline": "Master the wires of the world.",
   "desc": "From packets to firewalls: networking for hackers, devs and the curious.",
   "root": {

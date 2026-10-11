@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "cloud",
   "title": "Cloud Computing",
   "icon": "☁️",
-  "color": "#e879f9",
+  "color": "#e879f9", "kind": "skill",
   "tagline": "Own the cloud.",
   "desc": "AWS core services and cloud security: build it, then break it (legally).",
   "root": {

@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "linux",
   "title": "Linux",
   "icon": "🐧",
-  "color": "#fb923c",
+  "color": "#fb923c", "kind": "skill",
   "tagline": "From first boot to sysadmin.",
   "desc": "From installation to security hardening: the complete Linux journey, step by step.",
   "root": {

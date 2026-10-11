@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "backend",
   "title": "Backend Development",
   "icon": "⚙️",
-  "color": "#a78bfa",
+  "color": "#a78bfa", "kind": "role",
   "tagline": "Power the logic behind the apps.",
   "desc": "APIs, databases, auth and deployment: build the engine room of software.",
   "root": {

@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "frontend",
   "title": "Frontend Development",
   "icon": "🎨",
-  "color": "#60a5fa",
+  "color": "#60a5fa", "kind": "role",
   "tagline": "Build beautiful things for the web.",
   "desc": "From HTML to React: everything you need to craft modern user interfaces.",
   "root": {

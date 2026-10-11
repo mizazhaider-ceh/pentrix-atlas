@@ -166,7 +166,7 @@
     const cards = ROADMAPS.map(rm => {
       const pr = roadmapProgress(rm);
       return `
-      <a class="rm-card" href="#/r/${rm.id}" style="--rc:${rm.color}">
+      <a class="rm-card" href="#/r/${rm.id}" style="--rc:${rm.color}" data-kind="${rm.kind || "skill"}">
         <span class="rm-icon">${rm.icon}</span>
         <h3>${esc(rm.title)}</h3>
         <p>${esc(rm.desc || rm.tagline || "")}</p>
@@ -197,7 +197,14 @@
       </div>
     </section>
     <main class="wrap">
-      <div class="sec-head"><h2>Choose your path</h2></div>
+      <div class="sec-head"><h2>Choose your path</h2>
+        <div class="kind-tabs" role="tablist" aria-label="Roadmap type">
+          <button class="kt on" data-kind="all" role="tab">All <b>${ROADMAPS.length}</b></button>
+          <button class="kt" data-kind="role" role="tab">Roles <b>${ROADMAPS.filter(r => r.kind === "role").length}</b></button>
+          <button class="kt" data-kind="skill" role="tab">Skills <b>${ROADMAPS.filter(r => r.kind === "skill").length}</b></button>
+          <button class="kt" data-kind="practice" role="tab">Practice <b>${ROADMAPS.filter(r => r.kind === "practice").length}</b></button>
+        </div>
+      </div>
       <div class="rm-grid" id="rmGrid">${cards}</div>
       <section class="why">
         <div class="why-card"><span>\u{1F5FA}\uFE0F</span><h3>Visual learning</h3><p>See the whole journey as a map, not a wall of text. Zoom, pan, explore.</p></div>
@@ -211,13 +218,23 @@
       c.style.setProperty("--mx", (e.clientX - r.left) + "px");
       c.style.setProperty("--my", (e.clientY - r.top) + "px");
     }));
+    let activeKind = "all";
     const q = $("q");
-    q.addEventListener("input", () => {
+    const applyFilter = () => {
       const v = q.value.trim().toLowerCase();
       document.querySelectorAll(".rm-card").forEach(c => {
-        c.style.display = c.textContent.toLowerCase().includes(v) ? "" : "none";
+        const okKind = activeKind === "all" || c.dataset.kind === activeKind;
+        const okQ = !v || c.textContent.toLowerCase().includes(v);
+        c.style.display = okKind && okQ ? "" : "none";
       });
-    });
+    };
+    q.addEventListener("input", applyFilter);
+    document.querySelectorAll(".kt").forEach(t => t.addEventListener("click", () => {
+      document.querySelectorAll(".kt").forEach(x => x.classList.remove("on"));
+      t.classList.add("on");
+      activeKind = t.dataset.kind;
+      applyFilter();
+    }));
   }
 
   // ---------- roadmap view ----------
@@ -403,6 +420,31 @@
     window.onresize = () => { if (state.pz) state.pz.fitIfFresh(); };
   }
 
+  // ---------- cross-roadmap links (v31): match topic keywords to other roadmap titles ----------
+  const XL_STOP = new Set(("the,a,an,and,or,of,to,in,on,for,with,basics,intro,introduction,fundamentals,101," +
+    "getting,started,complete,guide,master,mastering,essential,essentials,advanced,core").split(","));
+  function crossLinks(rm, topic) {
+    const toks = (topic.t || "").toLowerCase().replace(/[^a-z0-9+.# ]/g, " ").split(/\s+/)
+      .filter(w => w.length > 2 && !XL_STOP.has(w));
+    if (!toks.length) return "";
+    const hits = [];
+    const catTitles = o => { const c = []; (function w(n, d) { if (d === 1) c.push(n.t); (n.children || []).forEach(k => w(k, d + 1)); })(o.root, 0); return c.join(" "); };
+    ROADMAPS.forEach(o => {
+      if (o.id === rm.id) return;
+      const hay = (o.title + " " + o.id + " " + catTitles(o)).toLowerCase();
+      const score = toks.filter(t => hay.includes(t)).length;
+      if (score > 0) hits.push({ o: o, score: score });
+    });
+    hits.sort((a, b) => b.score - a.score);
+    const top = hits.slice(0, 3);
+    if (!top.length) return "";
+    return '<div class="kids-h">Keep going in</div><div class="xlinks">' + top.map(h =>
+      '<a class="xlink" href="#/r/' + h.o.id + '" style="--rc:' + h.o.color + '">' +
+      '<span class="rm-icon sm">' + h.o.icon + '</span><span><b>' + esc(h.o.title) + '</b>' +
+      '<small>' + esc(h.o.desc || "") + '</small></span><span class="xgo">\u2192</span></a>'
+    ).join("") + '</div>';
+  }
+
   function openDrawer(rm, nid) {
     const n = state.rendered.byId[nid];
     if (!n) return;
@@ -479,6 +521,7 @@
         ${learn ? `<div class="kids-h">Learning objectives</div><ul class="dl-learn">${learn}</ul>` : `<p class="muted">Core concepts coming with the description above.</p>`}
         ${kids ? `<div class="kids-h">Continue to</div><div class="kids">${kids}</div>` : ""}
         ${sibs ? `<div class="kids-h">Related topics</div><div class="kids">${sibs}</div>` : ""}
+        ${crossLinks(rm, n)}
       </div>
       <div class="dr-pane" id="paneDo" hidden>
         ${todo ? `<div class="kids-h">Guided practice</div><ol class="dl-do">${todo}</ol>` : '<p class="muted">Hands-on steps coming soon.</p>'}

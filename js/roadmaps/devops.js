@@ -4,7 +4,7 @@ ROADMAPS.push({
   "id": "devops",
   "title": "DevOps",
   "icon": "♾️",
-  "color": "#f472b6",
+  "color": "#f472b6", "kind": "role",
   "tagline": "Ship fast, break nothing.",
   "desc": "CI/CD, containers, cloud and automation: the art of reliable delivery.",
   "root": {
