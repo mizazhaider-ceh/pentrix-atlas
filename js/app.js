@@ -165,7 +165,7 @@
       <a class="rm-card" href="#/r/${rm.id}" style="--rc:${rm.color}">
         <span class="rm-icon">${rm.icon}</span>
         <h3>${esc(rm.title)}</h3>
-        <p>${esc(rm.tagline)}</p>
+        <p>${esc(rm.desc || rm.tagline || "")}</p>
         <span class="rm-foot">
           <span class="rm-bar"><i style="width:${pr.pct}%"></i></span>
           <span class="rm-pct">${pr.pct}%</span>
