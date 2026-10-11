@@ -1,5 +1,5 @@
 /* Atlas roadmap data: Bug Bounty Hunting (bug-bounty)
-   Schema: { t, d, lv (1=Basic 2=Intermediate 3=Advanced), time, tip?, learn[], do[], tools[], res[{t,u}], pre[], badge } */
+   Schema: { t, d, lv, time, tip?, learn[], do[], tools[], res[[label,url]], pre[], badge, tag } */
 ROADMAPS.push({
   "id": "bug-bounty",
   "title": "Bug Bounty Hunting",
@@ -432,6 +432,140 @@ ROADMAPS.push({
             ],
             "lv": 3,
             "time": "~10h"
+          },
+          {
+            "t": "Bug Bounty Hunting",
+            "d": "Get paid for finding real bugs.",
+            "lv": 2,
+            "time": "~ongoing",
+            "learn": [
+              "How platforms work and how to read a program's scope/rules",
+              "Picking a target and a repeatable methodology to hunt it",
+              "Triage, duplicates, and managing your own expectations"
+            ],
+            "do": [
+              "Create HackerOne & Bugcrowd accounts and read 3 program policies",
+              "Pick ONE program with a wide scope and recon it thoroughly",
+              "Read 10 disclosed reports to learn what real bugs look like"
+            ],
+            "tools": [
+              "HackerOne",
+              "Bugcrowd",
+              "Intigriti"
+            ],
+            "res": [
+              [
+                "HackerOne Hacktivity (disclosed bugs)",
+                "https://hackerone.com/hacktivity"
+              ],
+              [
+                "Bugcrowd University",
+                "https://www.bugcrowd.com/hackers/bugcrowd-university/"
+              ]
+            ]
+          },
+          {
+            "t": "Writing Great Reports",
+            "d": "The most undervalued skill in the field.",
+            "lv": 2,
+            "time": "~2h",
+            "tip": "A critical bug with a confusing report gets a low bounty (or rejected). A clear report with impact + reproduction steps gets paid fast. This single skill changes your income.",
+            "learn": [
+              "Report anatomy: title, summary, impact, steps to reproduce, PoC, remediation",
+              "Writing for a busy triager, clarity and impact first",
+              "Good screenshots, request/response evidence, and severity (CVSS)"
+            ],
+            "do": [
+              "Take a lab finding and write a full professional report for it",
+              "Score it with a CVSS calculator and justify the rating",
+              "Get feedback or compare against a public disclosed report"
+            ],
+            "tools": [
+              "CVSS Calculator"
+            ],
+            "res": [
+              [
+                "CVSS Calculator",
+                "https://www.first.org/cvss/calculator/3.1"
+              ],
+              [
+                "How to write a good report",
+                "https://docs.hackerone.com/en/articles/8470531-quality-reports"
+              ],
+              [
+                "OWASP Disclosure Cheat Sheet",
+                "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Certifications & Portfolio",
+            "d": "Prove your skills to employers.",
+            "lv": 2,
+            "time": "~varies",
+            "learn": [
+              "Beginner-friendly certs (eJPT, PNPT) vs the respected OSCP",
+              "Building a public portfolio: write-ups, GitHub tools, CTF profiles",
+              "Picking a cert that matches your goal (job vs bounty)"
+            ],
+            "do": [
+              "Start a blog and publish one detailed lab/CTF write-up",
+              "Make a CTF profile (TryHackMe/HTB) and climb a bit",
+              "Pick a first cert target and plan the study path"
+            ],
+            "tools": [
+              "OSCP",
+              "PNPT",
+              "eJPT",
+              "CPTS"
+            ],
+            "res": [
+              [
+                "TCM Security (PNPT/PEH)",
+                "https://academy.tcm-sec.com/"
+              ],
+              [
+                "OffSec OSCP",
+                "https://www.offsec.com/courses/pen-200/"
+              ],
+              [
+                "CompTIA Security+",
+                "https://www.comptia.org/certifications/security"
+              ]
+            ]
+          },
+          {
+            "t": "Community & Never Stop Learning",
+            "d": "The field changes every week.",
+            "lv": 1,
+            "time": "~ongoing",
+            "tip": "The hackers who stay relevant follow researchers, read new disclosures, and keep practicing. Stagnation is the real vulnerability.",
+            "learn": [
+              "Where security news/research lives (Twitter/X, blogs, newsletters)",
+              "Learning from disclosed reports and CTF write-ups",
+              "Giving back: teaching, tooling, and translations"
+            ],
+            "do": [
+              "Follow 10 active security researchers and read weekly",
+              "Subscribe to one newsletter (e.g. tl;dr sec) and one CTF feed",
+              "Contribute one fix/translation to an open-source security project"
+            ],
+            "res": [
+              [
+                "tl;dr sec newsletter",
+                "https://tldrsec.com/"
+              ],
+              [
+                "Awesome Hacking",
+                "https://github.com/Hack-with-Github/Awesome-Hacking"
+              ],
+              [
+                "r/netsec",
+                "https://www.reddit.com/r/netsec/"
+              ]
+            ],
+            "tag": "opt"
           }
         ],
         "lv": 3,
@@ -439,5 +573,6 @@ ROADMAPS.push({
       }
     ],
     "lv": 0
-  }
+  },
+  "kind": "role"
 });

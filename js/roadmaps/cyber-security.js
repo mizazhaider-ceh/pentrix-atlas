@@ -1,12 +1,12 @@
-/* Atlas roadmap data: Cyber Security (cyber-security)
-   Schema: { t, d, lv (1=Basic 2=Intermediate 3=Advanced), time, tip?, learn[], do[], tools[], res[{t,u}], pre[], badge } */
+/* Atlas roadmap data: Cyber Security (cyber-security) — deep track imported from the OmniSec curriculum (his own).
+   Schema: { t, d, lv (1=Basic 2=Intermediate 3=Advanced), time, tip?, learn[], do[], tools[], res[[label,url]], pre[], badge, tag } */
 ROADMAPS.push({
   "id": "cyber-security",
   "title": "Cyber Security",
   "icon": "🛡️",
   "color": "#2dd4bf",
   "tagline": "From zero to offensive security pro.",
-  "desc": "The complete hacker path: fundamentals, recon, web hacking, exploitation and going pro. Every node is a skill with free resources.",
+  "desc": "The complete hacker path: mindset, fundamentals, recon, web hacking, exploitation, specializations and going pro. Every topic is a real mini-lesson.",
   "root": {
     "t": "The Hacker Mindset",
     "d": "Ethics, legality, and how hackers think. This is the non-negotiable first step.",
@@ -22,716 +22,1794 @@ ROADMAPS.push({
     ],
     "children": [
       {
-        "t": "Computer & Network Basics",
-        "d": "How computers and networks actually work under the hood.",
-        "res": [
-          [
-            "Cloudflare: OSI Model",
-            "https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/"
-          ],
-          [
-            "CIDR.xyz",
-            "https://cidr.xyz/"
-          ]
-        ],
-        "children": [
-          {
-            "t": "Linux Command Line",
-            "d": "Your home turf. Live in the terminal until it feels like home.",
-            "res": [
-              [
-                "LinuxCommand.org",
-                "https://linuxcommand.org/"
-              ],
-              [
-                "OverTheWire Bandit",
-                "https://overthewire.org/wargames/bandit/"
-              ]
-            ],
-            "children": [
-              {
-                "t": "File Navigation",
-                "d": "cd, ls, find at speed.",
-                "res": [
-                  [
-                    "Linux Journey",
-                    "https://linuxjourney.com/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              },
-              {
-                "t": "Users & Permissions",
-                "d": "chmod, chown, sudo.",
-                "res": [
-                  [
-                    "Linux Journey",
-                    "https://linuxjourney.com/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              }
-            ],
-            "lv": 1,
-            "time": "~4h"
-          },
-          {
-            "t": "Networking: TCP/IP & DNS",
-            "d": "Packets, ports, protocols. The language of the network.",
-            "res": [
-              [
-                "Cloudflare: What is DNS",
-                "https://www.cloudflare.com/learning/dns/what-is-dns/"
-              ],
-              [
-                "Wireshark",
-                "https://www.wireshark.org/"
-              ]
-            ],
-            "children": [
-              {
-                "t": "Subnetting Basics",
-                "d": "CIDR without tears.",
-                "res": [
-                  [
-                    "CIDR.xyz",
-                    "https://cidr.xyz/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              },
-              {
-                "t": "Common Ports",
-                "d": "The 20 ports that matter.",
-                "res": [
-                  [
-                    "Nmap Book",
-                    "https://nmap.org/book/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              }
-            ],
-            "lv": 1,
-            "time": "~4h"
-          },
-          {
-            "t": "Wireshark",
-            "d": "See the invisible. Read packets like a book.",
-            "res": [
-              [
-                "Wireshark Docs",
-                "https://www.wireshark.org/docs/"
-              ],
-              [
-                "Sample Captures",
-                "https://wiki.wireshark.org/SampleCaptures"
-              ]
-            ],
-            "children": [
-              {
-                "t": "Display Filters",
-                "d": "Slice traffic precisely.",
-                "res": [
-                  [
-                    "Wireshark Docs",
-                    "https://www.wireshark.org/docs/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              },
-              {
-                "t": "Follow TCP Streams",
-                "d": "Rebuild conversations.",
-                "res": [
-                  [
-                    "Wireshark Docs",
-                    "https://www.wireshark.org/docs/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              }
-            ],
-            "lv": 1,
-            "time": "~4h"
-          }
-        ],
+        "t": "Mindset, Ethics & Your Lab",
+        "d": "Before any tool: how to think like an attacker, how to stay legal, and how to build a safe practice lab. Do NOT skip this, it prevents legal trouble and wasted months.",
         "lv": 1,
-        "time": "~4h"
-      },
-      {
-        "t": "Programming for Hackers",
-        "d": "Code is your superpower. Automate everything you do twice.",
-        "res": [
-          [
-            "Official Python Tutorial",
-            "https://docs.python.org/3/tutorial/"
-          ],
-          [
-            "web.dev Learn",
-            "https://web.dev/learn"
-          ]
-        ],
         "children": [
           {
-            "t": "Python",
-            "d": "The hacker's first language. Sockets, requests, scripting.",
-            "res": [
-              [
-                "Python Tutorial",
-                "https://docs.python.org/3/tutorial/"
-              ],
-              [
-                "Automate the Boring Stuff",
-                "https://automatetheboringstuff.com/"
-              ]
-            ],
-            "children": [
-              {
-                "t": "Requests & Web",
-                "d": "Talk HTTP in Python.",
-                "res": [
-                  [
-                    "Python Docs",
-                    "https://docs.python.org/3/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              },
-              {
-                "t": "Scripting Tools",
-                "d": "argparse, sockets, subprocess.",
-                "res": [
-                  [
-                    "Python Docs",
-                    "https://docs.python.org/3/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              }
-            ],
+            "t": "Ethics, Law & Scope",
+            "d": "The rules that keep hacking legal.",
             "lv": 1,
-            "time": "~4h"
-          },
-          {
-            "t": "Bash Scripting",
-            "d": "The glue of the terminal. Chain tools into weapons.",
+            "time": "~2h",
+            "learn": [
+              "Difference between authorized and unauthorized access, and why intent doesn't protect you legally",
+              "What a 'scope' is: the exact systems/IPs/domains you're allowed to test, and nothing else",
+              "Key laws: US CFAA, UK Computer Misuse Act, and your own country's cyber law",
+              "Responsible disclosure vs full disclosure vs selling exploits"
+            ],
+            "do": [
+              "Read one real bug bounty program policy end-to-end (e.g. on HackerOne) and list what is IN and OUT of scope",
+              "Write your personal rule: 'I only touch systems I own or have written permission for'",
+              "Bookmark a Rules of Engagement template you'll reuse for every engagement"
+            ],
             "res": [
               [
-                "Bash Hackers Wiki",
-                "https://wiki.bash-hackers.org/"
+                "HackerOne Disclosure Guidelines",
+                "https://www.hackerone.com/disclosure-guidelines"
               ],
               [
-                "ShellCheck",
-                "https://www.shellcheck.net/"
+                "EFF: Coders' Rights",
+                "https://www.eff.org/issues/coders"
+              ],
+              [
+                "HackerOne Hacktivity (real disclosures)",
+                "https://hackerone.com/hacktivity"
               ]
-            ],
+            ]
+          },
+          {
+            "t": "The Pentest Methodology",
+            "d": "The repeatable loop every engagement follows.",
             "lv": 1,
-            "time": "~4h"
-          },
-          {
-            "t": "Web Tech: HTML & JS",
-            "d": "To break the web, you must know the web.",
+            "time": "~3h",
+            "learn": [
+              "The 6 phases: Recon → Enumeration → Exploitation → Privilege Escalation → Post-Exploitation → Reporting",
+              "Why ~70% of time is recon/enumeration, not 'hacking'",
+              "Industry frameworks: PTES, OSSTMM, MITRE ATT&CK, and the Cyber Kill Chain",
+              "How to keep a methodology checklist so you never forget a step"
+            ],
+            "do": [
+              "Draw the 6-phase loop on paper from memory until it sticks",
+              "Skim the MITRE ATT&CK matrix and pick 5 techniques that sound interesting",
+              "Create a reusable engagement checklist (a simple markdown file)"
+            ],
+            "tools": [
+              "MITRE ATT&CK",
+              "PTES"
+            ],
             "res": [
               [
-                "MDN Web Docs",
-                "https://developer.mozilla.org/"
+                "MITRE ATT&CK Matrix",
+                "https://attack.mitre.org/"
               ],
               [
-                "web.dev",
-                "https://web.dev/"
+                "PTES Standard",
+                "http://www.pentest-standard.org/"
+              ],
+              [
+                "OWASP Web Security Testing Guide",
+                "https://owasp.org/www-project-web-security-testing-guide/"
               ]
-            ],
-            "children": [
-              {
-                "t": "DOM & Events",
-                "d": "What JavaScript can touch.",
-                "res": [
-                  [
-                    "MDN",
-                    "https://developer.mozilla.org/"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              },
-              {
-                "t": "Google Dorking",
-                "d": "Search like a spy.",
-                "res": [
-                  [
-                    "Google Hacking DB",
-                    "https://www.exploit-db.com/google-hacking-database"
-                  ]
-                ],
-                "lv": 2,
-                "time": "~6h"
-              }
-            ],
+            ]
+          },
+          {
+            "t": "Note-Taking & Documentation",
+            "d": "The #1 skill nobody teaches.",
             "lv": 1,
-            "time": "~4h"
-          }
-        ],
-        "lv": 1,
-        "time": "~4h"
-      },
-      {
-        "t": "Reconnaissance",
-        "d": "Information gathering. The quieter you are, the better you are.",
-        "res": [
-          [
-            "OSINT Framework",
-            "https://osintframework.com/"
-          ],
-          [
-            "Nmap",
-            "https://nmap.org/"
-          ]
-        ],
-        "children": [
-          {
-            "t": "OSINT",
-            "d": "Intelligence from public sources. People leak everything.",
+            "time": "~2h",
+            "tip": "Beginners 'remember it later', then lose a found vulnerability because they never wrote the request down. If it isn't written, it didn't happen.",
+            "learn": [
+              "Why structured notes = faster reports + repeatable findings",
+              "A folder-per-target structure: scope, recon, creds, screenshots, exploits, report",
+              "Markdown basics for clean, portable notes",
+              "How to log every command and its output as you go"
+            ],
+            "do": [
+              "Install a note tool (Obsidian or CherryTree) and create a target template",
+              "Practice logging a full terminal session with `script session.log` (Linux)",
+              "Take 3 screenshots and embed them in a markdown note with captions"
+            ],
+            "tools": [
+              "Obsidian",
+              "CherryTree",
+              "Markdown"
+            ],
             "res": [
               [
-                "OSINT Framework",
-                "https://osintframework.com/"
+                "Obsidian (free)",
+                "https://obsidian.md/"
               ],
               [
-                "theHarvester",
-                "https://github.com/laramies/theHarvester"
+                "Markdown Guide",
+                "https://www.markdownguide.org/basic-syntax/"
+              ],
+              [
+                "Joplin (free, offline notes)",
+                "https://joplinapp.org/"
               ]
             ],
-            "children": [
-              {
-                "t": "Social Media Intel",
-                "d": "Public profiles, deep insights.",
-                "res": [
-                  [
-                    "OSINT Framework",
-                    "https://osintframework.com/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 2,
-            "time": "~6h"
+            "tag": "opt"
           },
           {
-            "t": "Nmap Scanning",
-            "d": "Map the attack surface: hosts, ports, services.",
+            "t": "Learning How to Learn & Googling",
+            "d": "Turn 'stuck' into 'solved' fast.",
+            "lv": 1,
+            "time": "~1h",
+            "tip": "Most 'I'm stuck' moments are really 'I asked the wrong question.' Read the error message, it usually tells you the fix.",
+            "learn": [
+              "How to read man pages, --help, and error messages instead of guessing",
+              "Search operators: exact phrases in quotes, site:, filetype:, minus to exclude",
+              "When to use official docs vs forums vs HackTricks",
+              "Building a personal cheat-sheet habit"
+            ],
+            "do": [
+              "Use `man nmap` and `tldr nmap` on the same command, compare them",
+              "Practice 5 Google dorks (e.g. `site:github.com nmap cheatsheet filetype:md`)",
+              "Bookmark HackTricks and explainshell.com"
+            ],
+            "tools": [
+              "man",
+              "tldr",
+              "explainshell"
+            ],
             "res": [
               [
-                "Nmap Man Page",
-                "https://nmap.org/book/man.html"
+                "explainshell.com",
+                "https://explainshell.com/"
               ],
               [
-                "HackTricks Network",
-                "https://book.hacktricks.xyz/network-services-pentesting"
-              ]
-            ],
-            "children": [
-              {
-                "t": "Scan Types",
-                "d": "SYN, connect, UDP.",
-                "res": [
-                  [
-                    "Nmap Book",
-                    "https://nmap.org/book/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "NSE Scripts",
-                "d": "Nmap's plugin arsenal.",
-                "res": [
-                  [
-                    "Nmap Book",
-                    "https://nmap.org/book/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 2,
-            "time": "~6h"
-          }
-        ],
-        "lv": 2,
-        "time": "~6h"
-      },
-      {
-        "t": "Web Hacking",
-        "d": "Where the bounties live. Master the request.",
-        "res": [
-          [
-            "PortSwigger Academy",
-            "https://portswigger.net/web-security"
-          ],
-          [
-            "OWASP Top 10",
-            "https://owasp.org/www-project-top-ten/"
-          ]
-        ],
-        "children": [
-          {
-            "t": "Burp Suite",
-            "d": "The web hacker's workbench. Intercept everything.",
-            "res": [
-              [
-                "Burp Documentation",
-                "https://portswigger.net/burp/documentation"
+                "HackTricks",
+                "https://book.hacktricks.xyz/"
               ],
               [
-                "PortSwigger Academy",
-                "https://portswigger.net/web-security"
+                "Google Hacking Database",
+                "https://www.exploit-db.com/google-hacking-database"
               ]
             ],
-            "children": [
-              {
-                "t": "Proxy & Intercept",
-                "d": "Own the traffic.",
-                "res": [
-                  [
-                    "PortSwigger",
-                    "https://portswigger.net/web-security"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "Repeater & Intruder",
-                "d": "Replay and automate.",
-                "res": [
-                  [
-                    "PortSwigger",
-                    "https://portswigger.net/web-security"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 2,
-            "time": "~6h"
+            "tag": "opt"
           },
           {
-            "t": "SQL Injection",
-            "d": "Make the database talk. The classic killer.",
+            "t": "Virtualization & Snapshots",
+            "d": "Run safe, disposable machines.",
+            "lv": 1,
+            "time": "~2h",
+            "learn": [
+              "What a hypervisor is (VirtualBox/VMware) and why VMs isolate risk",
+              "Snapshots: save a clean state and roll back after breaking something",
+              "Allocating RAM/CPU sanely so your host stays usable"
+            ],
+            "do": [
+              "Install VirtualBox (free) or VMware Workstation Player",
+              "Create your first VM and take a snapshot named 'clean-install'",
+              "Break something on purpose, then restore the snapshot to confirm it works"
+            ],
+            "tools": [
+              "VirtualBox",
+              "VMware"
+            ],
             "res": [
               [
-                "PortSwigger: SQLi",
-                "https://portswigger.net/web-security/sql-injection"
+                "VirtualBox Downloads",
+                "https://www.virtualbox.org/wiki/Downloads"
               ],
               [
-                "PayloadsAllTheThings",
-                "https://github.com/swisskyrepo/PayloadsAllTheThings"
+                "VirtualBox Manual: Snapshots",
+                "https://www.virtualbox.org/manual/ch01.html#snapshots"
+              ],
+              [
+                "Proxmox VE (free hypervisor)",
+                "https://www.proxmox.com/en/proxmox-ve"
               ]
-            ],
-            "children": [
-              {
-                "t": "Union-Based",
-                "d": "Read the whole database.",
-                "res": [
-                  [
-                    "PortSwigger SQLi",
-                    "https://portswigger.net/web-security/sql-injection"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "Blind SQLi",
-                "d": "When errors go silent.",
-                "badge": "ADV",
-                "res": [
-                  [
-                    "PortSwigger SQLi",
-                    "https://portswigger.net/web-security/sql-injection"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 2,
-            "time": "~6h"
+            ]
           },
           {
-            "t": "XSS & Broken Access Control",
-            "d": "Client-side bugs and IDORs. Bug bounty bread and butter.",
+            "t": "Set Up Your Attacker VM",
+            "d": "Your hacking workstation.",
+            "lv": 1,
+            "time": "~2h",
+            "learn": [
+              "Why Kali/Parrot ship with tools pre-installed",
+              "Updating safely (apt update && apt full-upgrade) and what can break",
+              "Taking a snapshot right after setup so you can always reset"
+            ],
+            "do": [
+              "Download the Kali VirtualBox image (pre-built) and import it",
+              "Login, run `sudo apt update`, then snapshot it as 'kali-fresh'",
+              "Verify tools exist: run `nmap --version` and `msfconsole -v`"
+            ],
+            "tools": [
+              "Kali Linux",
+              "Parrot OS"
+            ],
             "res": [
               [
-                "PortSwigger: XSS",
-                "https://portswigger.net/web-security/cross-site-scripting"
+                "Kali Pre-built VMs",
+                "https://www.kali.org/get-kali/#kali-virtual-machines"
               ],
               [
-                "PortSwigger: Access Control",
-                "https://portswigger.net/web-security/access-control"
+                "Parrot Security",
+                "https://www.parrotsec.org/download/"
+              ],
+              [
+                "Kali Linux Docs",
+                "https://www.kali.org/docs/"
               ]
-            ],
-            "children": [
-              {
-                "t": "Reflected & Stored XSS",
-                "d": "Two flavors, one impact.",
-                "res": [
-                  [
-                    "PortSwigger XSS",
-                    "https://portswigger.net/web-security/cross-site-scripting"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "IDOR Testing",
-                "d": "Change the ID, own the data.",
-                "res": [
-                  [
-                    "PortSwigger Access Control",
-                    "https://portswigger.net/web-security/access-control"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 2,
-            "time": "~6h"
-          }
-        ],
-        "lv": 2,
-        "time": "~6h"
-      },
-      {
-        "t": "Exploitation",
-        "d": "Turn vulnerabilities into access.",
-        "res": [
-          [
-            "Metasploit Docs",
-            "https://docs.metasploit.com/"
-          ],
-          [
-            "HackTricks",
-            "https://book.hacktricks.xyz/"
-          ]
-        ],
-        "children": [
+            ]
+          },
           {
-            "t": "Metasploit Framework",
-            "d": "The exploitation framework. Scan to shell.",
-            "badge": "LAB",
+            "t": "Deploy Legal Targets to Attack",
+            "d": "Practice without breaking the law.",
+            "lv": 1,
+            "time": "~3h",
+            "learn": [
+              "Why you need intentionally-vulnerable targets (never test real sites)",
+              "Online platforms vs local vulnerable VMs",
+              "Matching a target to a skill (web app vs network box)"
+            ],
+            "do": [
+              "Make a free TryHackMe account and finish the 'Pre Security' intro room",
+              "Deploy DVWA or OWASP Juice Shop locally in a VM",
+              "Download one easy VulnHub box and import it into your lab network"
+            ],
+            "tools": [
+              "TryHackMe",
+              "DVWA",
+              "OWASP Juice Shop",
+              "VulnHub",
+              "HackTheBox"
+            ],
             "res": [
               [
-                "Metasploit Docs",
-                "https://docs.metasploit.com/"
+                "TryHackMe",
+                "https://tryhackme.com/"
+              ],
+              [
+                "OWASP Juice Shop",
+                "https://owasp.org/www-project-juice-shop/"
+              ],
+              [
+                "VulnHub",
+                "https://www.vulnhub.com/"
               ],
               [
                 "Metasploitable 3",
                 "https://github.com/rapid7/metasploitable3"
               ]
-            ],
-            "children": [
-              {
-                "t": "Modules & Payloads",
-                "d": "Pick your weapon.",
-                "res": [
-                  [
-                    "Metasploit Docs",
-                    "https://docs.rapid7.com/metasploit/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "Meterpreter",
-                "d": "The post-exploitation shell.",
-                "res": [
-                  [
-                    "Metasploit Docs",
-                    "https://docs.rapid7.com/metasploit/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 3,
-            "time": "~10h"
+            ]
           },
           {
-            "t": "Password Attacks",
-            "d": "Crack the hashes, spray the logins.",
-            "badge": "LAB",
+            "t": "Network Isolation & Safety",
+            "d": "Keep malware off your real machine.",
+            "lv": 1,
+            "time": "~1h",
+            "tip": "Students leave the lab on 'Bridged' networking, then a malware sample or a vulnerable box touches their home network. Use Host-Only/Internal.",
+            "learn": [
+              "VM network modes: NAT vs Bridged vs Host-Only vs Internal",
+              "Why detonation/malware analysis needs an isolated Host-Only/Internal network",
+              "Keeping the attacker + victim on the same private network only"
+            ],
+            "do": [
+              "Set your victim VMs to Host-Only or Internal network",
+              "Confirm the victim CANNOT reach the internet (ping fails) but the attacker CAN reach the victim",
+              "Document your lab's IP plan in your notes"
+            ],
+            "tools": [
+              "VirtualBox",
+              "VMware"
+            ],
             "res": [
               [
-                "Hashcat Wiki",
-                "https://hashcat.net/wiki/"
-              ],
-              [
-                "revshells.com",
-                "https://www.revshells.com/"
+                "VirtualBox Networking Modes",
+                "https://www.virtualbox.org/manual/ch06.html"
               ]
             ],
-            "children": [
-              {
-                "t": "Hash Cracking",
-                "d": "hashcat fundamentals.",
-                "res": [
-                  [
-                    "hashcat wiki",
-                    "https://hashcat.net/wiki/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "Wordlists & Rules",
-                "d": "SecLists plus mutations.",
-                "res": [
-                  [
-                    "SecLists",
-                    "https://github.com/danielmiessler/SecLists"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
+            "tag": "opt"
+          }
+        ]
+      },
+      {
+        "t": "Core Fundamentals",
+        "d": "You can't exploit what you don't understand. Master networking, Linux, Windows and a scripting language. This phase is long on purpose, strong foundations make everything after it easy.",
+        "lv": 1,
+        "children": [
+          {
+            "t": "OSI & TCP/IP Models",
+            "d": "How data actually moves.",
+            "lv": 1,
+            "time": "~3h",
+            "learn": [
+              "The 7 OSI layers + the 4 TCP/IP layers, and what lives at each",
+              "Encapsulation: how a packet gets headers added at each layer",
+              "Where common attacks map (L2 ARP spoof, L3 routing, L7 web)"
             ],
-            "lv": 3,
-            "time": "~10h"
+            "do": [
+              "Memorize the layers with the mnemonic 'Please Do Not Throw Sausage Pizza Away'",
+              "Watch one full Network+ video on the OSI model and take notes",
+              "For 5 protocols (HTTP, DNS, TCP, IP, Ethernet) write which layer each is"
+            ],
+            "res": [
+              [
+                "Professor Messer Network+ (free)",
+                "https://www.professormesser.com/network-plus/n10-009/n10-009-training-course/"
+              ],
+              [
+                "Cloudflare: OSI model",
+                "https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/"
+              ]
+            ]
           },
           {
-            "t": "Privilege Escalation",
-            "d": "From low user to root. The real game.",
-            "badge": "ADV",
+            "t": "IP Addressing, Subnetting & CIDR",
+            "d": "Read 10.0.0.0/24 instantly.",
+            "lv": 1,
+            "time": "~4h",
+            "tip": "Skipping subnetting feels fine, until you scan the wrong range and miss every host. Learn CIDR now, save weeks later.",
+            "learn": [
+              "IPv4 structure, private vs public ranges, and what a subnet mask does",
+              "CIDR notation: /24 = 256 addresses, /16, /8 etc.",
+              "Calculating network/broadcast/usable host ranges",
+              "Why scope is often given as a CIDR block"
+            ],
+            "do": [
+              "Use `ipcalc 192.168.1.0/24` and read every field it outputs",
+              "By hand, find the host range of 172.16.5.0/26",
+              "Practice 10 subnetting questions on subnettingpractice.com"
+            ],
+            "tools": [
+              "ipcalc"
+            ],
+            "res": [
+              [
+                "Subnetting Practice",
+                "https://subnettingpractice.com/"
+              ],
+              [
+                "Professor Messer: Subnetting",
+                "https://www.professormesser.com/network-plus/n10-008/n10-008-video/ipv4-subnetting-n10-008/"
+              ],
+              [
+                "CIDR.xyz (visual subnetting)",
+                "https://cidr.xyz/"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Ports, Protocols & Services",
+            "d": "The doors into a machine.",
+            "lv": 1,
+            "time": "~3h",
+            "learn": [
+              "TCP vs UDP and the 3-way handshake (SYN, SYN-ACK, ACK)",
+              "Default ports: 21 FTP, 22 SSH, 25 SMTP, 53 DNS, 80/443 HTTP(S), 139/445 SMB, 3389 RDP",
+              "What 'a service' is and how a version maps to known exploits"
+            ],
+            "do": [
+              "Make a flashcard deck of the top 20 ports and drill it",
+              "On your Kali box run `cat /etc/services` and explore it",
+              "Connect to a service manually with `nc <ip> 80` and type `GET / HTTP/1.0`"
+            ],
+            "tools": [
+              "netcat"
+            ],
+            "res": [
+              [
+                "IANA Port Numbers",
+                "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"
+              ],
+              [
+                "SpeedGuide Ports Database",
+                "https://www.speedguide.net/ports.php"
+              ]
+            ]
+          },
+          {
+            "t": "Packet Analysis (Wireshark)",
+            "d": "See the traffic with your own eyes.",
+            "lv": 2,
+            "time": "~3h",
+            "learn": [
+              "Capturing traffic and reading a TCP handshake packet-by-packet",
+              "Display filters (ip.addr==, tcp.port==80, http)",
+              "Following a TCP stream to reconstruct a conversation"
+            ],
+            "do": [
+              "Capture your own traffic while browsing a plain HTTP site",
+              "Filter to `http` and find the GET request and credentials if any",
+              "Right-click a packet → Follow → TCP Stream and read it"
+            ],
+            "tools": [
+              "Wireshark",
+              "tcpdump"
+            ],
+            "res": [
+              [
+                "Wireshark Sample Captures",
+                "https://wiki.wireshark.org/SampleCaptures"
+              ],
+              [
+                "Wireshark Display Filters",
+                "https://wiki.wireshark.org/DisplayFilters"
+              ]
+            ]
+          },
+          {
+            "t": "How DNS Really Works",
+            "d": "The internet's phone book, and a recon goldmine.",
+            "lv": 1,
+            "time": "~2h",
+            "tip": "People treat DNS as magic. Understanding records is what makes subdomain recon (Phase 2) actually click.",
+            "learn": [
+              "Record types: A, AAAA, CNAME, MX, NS, TXT, and what each reveals",
+              "The resolution flow: resolver → root → TLD → authoritative",
+              "Why DNS leaks infrastructure (mail servers, subdomains, SPF/DMARC)"
+            ],
+            "do": [
+              "Run `dig A example.com`, `dig MX example.com`, `dig TXT example.com`",
+              "Use `nslookup` interactively to query a specific DNS server",
+              "Map the records you found into your notes for one domain"
+            ],
+            "tools": [
+              "dig",
+              "nslookup",
+              "host"
+            ],
+            "res": [
+              [
+                "Cloudflare: DNS",
+                "https://www.cloudflare.com/learning/dns/what-is-dns/"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "The Linux Command Line",
+            "d": "Your home for the rest of your career.",
+            "lv": 1,
+            "time": "~6h",
+            "learn": [
+              "Filesystem layout (/etc, /var, /home, /tmp) and navigation (cd, ls, pwd)",
+              "Files: cat, less, cp, mv, rm, find, locate",
+              "Pipes `|` and redirection `>` `>>` `2>` to chain commands",
+              "Package management with apt"
+            ],
+            "do": [
+              "Complete OverTheWire 'Bandit' levels 0–15 (free, browser SSH)",
+              "Find every .conf file under /etc with `find /etc -name '*.conf'`",
+              "Chain commands: `cat /etc/passwd | grep bash | wc -l`"
+            ],
+            "tools": [
+              "bash",
+              "find",
+              "grep"
+            ],
+            "res": [
+              [
+                "OverTheWire: Bandit",
+                "https://overthewire.org/wargames/bandit/"
+              ],
+              [
+                "Linux Journey",
+                "https://linuxjourney.com/"
+              ],
+              [
+                "LinuxCommand.org",
+                "https://linuxcommand.org/"
+              ]
+            ]
+          },
+          {
+            "t": "Permissions, Users & sudo",
+            "d": "The root of most privilege escalation.",
+            "lv": 1,
+            "time": "~3h",
+            "learn": [
+              "rwx for user/group/other and numeric chmod (755, 644)",
+              "Ownership with chown, and the meaning of SUID/SGID/sticky bits",
+              "Users, groups, /etc/passwd, /etc/shadow, and the sudoers file"
+            ],
+            "do": [
+              "Create a file, set it 600, then 755, and observe `ls -l` change",
+              "Find all SUID binaries: `find / -perm -4000 2>/dev/null`",
+              "Look up one of those binaries on GTFOBins to see why it matters"
+            ],
+            "tools": [
+              "chmod",
+              "chown",
+              "GTFOBins"
+            ],
             "res": [
               [
                 "GTFOBins",
                 "https://gtfobins.github.io/"
               ],
               [
-                "HackTricks PrivEsc",
-                "https://book.hacktricks.xyz/linux-hardening/privilege-escalation"
+                "Linux Permissions Explained",
+                "https://linuxjourney.com/lesson/file-permissions"
+              ]
+            ]
+          },
+          {
+            "t": "Text Processing: grep, sed, awk, jq",
+            "d": "Slice huge output in seconds.",
+            "lv": 2,
+            "time": "~3h",
+            "tip": "Beginners scroll through 10,000 lines by hand. Pros pipe it through grep/awk and find the answer in one line. This skill compounds forever.",
+            "learn": [
+              "grep with regex, -i, -r, -v, -o, and context flags",
+              "Cut/awk to extract columns; sed to substitute text",
+              "jq to query JSON from APIs"
+            ],
+            "do": [
+              "From `cat /etc/passwd`, extract just usernames with `cut -d: -f1`",
+              "Use awk to print column 1 and 7: `awk -F: '{print $1, $7}' /etc/passwd`",
+              "Pipe a JSON API response through `jq '.'` to pretty-print it"
+            ],
+            "tools": [
+              "grep",
+              "sed",
+              "awk",
+              "jq",
+              "cut"
+            ],
+            "res": [
+              [
+                "RegexOne (learn regex)",
+                "https://regexone.com/"
+              ],
+              [
+                "jq Manual",
+                "https://jqlang.github.io/jq/manual/"
               ]
             ],
-            "children": [
-              {
-                "t": "Linux Privesc",
-                "d": "SUID, sudo, cron, kernels.",
-                "badge": "ADV",
-                "res": [
-                  [
-                    "HackTricks",
-                    "https://book.hacktricks.xyz/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              },
-              {
-                "t": "Windows Privesc",
-                "d": "Services, tokens, potatoes.",
-                "badge": "ADV",
-                "res": [
-                  [
-                    "HackTricks",
-                    "https://book.hacktricks.xyz/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
+            "tag": "opt"
+          },
+          {
+            "t": "Bash Scripting",
+            "d": "Automate the boring parts.",
+            "lv": 2,
+            "time": "~4h",
+            "learn": [
+              "Variables, quoting, command substitution $(...)",
+              "Loops (for/while), conditionals (if/test), and exit codes",
+              "Reading args ($1, $@) and writing a reusable script"
             ],
-            "lv": 3,
-            "time": "~10h"
+            "do": [
+              "Write a script that pings a /24 and prints live hosts",
+              "Write a loop that curls a list of URLs and saves status codes",
+              "Make a script executable (chmod +x) and run it with ./"
+            ],
+            "tools": [
+              "bash"
+            ],
+            "res": [
+              [
+                "Bash scripting cheatsheet",
+                "https://devhints.io/bash"
+              ],
+              [
+                "ShellCheck (lint your scripts)",
+                "https://www.shellcheck.net/"
+              ],
+              [
+                "Bash Hackers Wiki",
+                "https://wiki.bash-hackers.org/"
+              ]
+            ]
+          },
+          {
+            "t": "Processes, Services & systemd",
+            "d": "Know what's running and why.",
+            "lv": 2,
+            "time": "~2h",
+            "learn": [
+              "ps, top/htop, and reading PID/PPID/owner",
+              "systemctl to start/stop/enable services and read logs with journalctl",
+              "Networking view: ss/netstat to map ports to processes"
+            ],
+            "do": [
+              "List listening ports and their processes: `ss -tlnp`",
+              "Inspect a service: `systemctl status ssh`",
+              "Kill a process you started by PID"
+            ],
+            "tools": [
+              "ps",
+              "htop",
+              "systemctl",
+              "ss"
+            ],
+            "res": [
+              [
+                "systemd basics",
+                "https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal"
+              ],
+              [
+                "systemd Documentation",
+                "https://www.freedesktop.org/wiki/Software/systemd/"
+              ]
+            ]
+          },
+          {
+            "t": "Windows Internals Basics",
+            "d": "Most enterprises run Windows, so will your targets.",
+            "lv": 2,
+            "time": "~4h",
+            "learn": [
+              "Registry, services, scheduled tasks, and the file system layout",
+              "Users, groups, and the local SAM vs domain accounts",
+              "NTFS permissions and UAC at a high level"
+            ],
+            "do": [
+              "In a Windows VM, open Task Manager, Services.msc and regedit and explore",
+              "List local users with `net user` in cmd",
+              "Find scheduled tasks with `schtasks` "
+            ],
+            "tools": [
+              "cmd",
+              "regedit"
+            ],
+            "res": [
+              [
+                "Microsoft: Windows components",
+                "https://learn.microsoft.com/en-us/windows/win32/"
+              ],
+              [
+                "LOLBAS (living-off-the-land)",
+                "https://lolbas-project.github.io/"
+              ]
+            ]
+          },
+          {
+            "t": "PowerShell Fundamentals",
+            "d": "The attacker's power tool on Windows.",
+            "lv": 2,
+            "time": "~3h",
+            "tip": "Linux-only learners skip PowerShell, then freeze on their first Windows/AD box. Learn the verbs-nouns model early.",
+            "learn": [
+              "Cmdlet Verb-Noun structure and the pipeline of objects (not text)",
+              "Get-Help, Get-Command, Get-Member to explore anything",
+              "Useful cmdlets: Get-Process, Get-Service, Get-ChildItem, Invoke-WebRequest"
+            ],
+            "do": [
+              "Run `Get-Command -Verb Get` and skim what's available",
+              "Pipe objects: `Get-Process | Sort-Object CPU -Descending | Select-Object -First 5`",
+              "Download a file with `Invoke-WebRequest`"
+            ],
+            "tools": [
+              "PowerShell"
+            ],
+            "res": [
+              [
+                "Microsoft PowerShell Docs",
+                "https://learn.microsoft.com/en-us/powershell/scripting/learn/ps101/00-introduction"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Python for Hackers",
+            "d": "Write your own tools.",
+            "lv": 2,
+            "time": "~8h",
+            "learn": [
+              "Core syntax: variables, lists/dicts, loops, functions, files",
+              "The requests library for HTTP, and sockets for raw connections",
+              "argparse to make real CLI tools; virtualenv/pip for packages"
+            ],
+            "do": [
+              "Write a port scanner using the socket module",
+              "Write a script that brute-forces a login form with requests",
+              "Refactor one of your bash one-liners into a Python tool with argparse"
+            ],
+            "tools": [
+              "Python",
+              "requests"
+            ],
+            "res": [
+              [
+                "Automate the Boring Stuff (free)",
+                "https://automatetheboringstuff.com/"
+              ],
+              [
+                "TryHackMe: Python Basics",
+                "https://tryhackme.com/room/pythonbasics"
+              ],
+              [
+                "Official Python Tutorial",
+                "https://docs.python.org/3/tutorial/"
+              ]
+            ]
+          },
+          {
+            "t": "How the Web Works",
+            "d": "The foundation of all web hacking.",
+            "lv": 1,
+            "time": "~3h",
+            "learn": [
+              "HTTP request/response anatomy: methods, headers, status codes, body",
+              "Cookies, sessions, and how login state is kept",
+              "Client vs server, and where HTML/CSS/JS run"
+            ],
+            "do": [
+              "Open browser DevTools → Network tab and inspect a real request",
+              "Resend a request with curl and add a custom header (-H)",
+              "Identify a Set-Cookie header and the session cookie it sets"
+            ],
+            "tools": [
+              "curl",
+              "DevTools"
+            ],
+            "res": [
+              [
+                "MDN: HTTP overview",
+                "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview"
+              ],
+              [
+                "HTTP status codes",
+                "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+              ],
+              [
+                "web.dev Learn",
+                "https://web.dev/learn"
+              ]
+            ]
+          },
+          {
+            "t": "Git & Version Control",
+            "d": "Read code, grab tools, contribute back.",
+            "lv": 1,
+            "time": "~2h",
+            "tip": "Skipped until you urgently need to clone a tool or read a leaked repo. Learn it calmly now.",
+            "learn": [
+              "clone, add, commit, push, pull, branch and what each does",
+              "Reading a repo's history and finding secrets in old commits",
+              "Why exposed .git folders on websites are a finding"
+            ],
+            "do": [
+              "Clone a security tool from GitHub and read its README",
+              "Make your own repo, commit notes, and push to GitHub",
+              "Explore a repo's commit log with `git log --oneline`"
+            ],
+            "tools": [
+              "git"
+            ],
+            "res": [
+              [
+                "Git tutorial",
+                "https://learngitbranching.js.org/"
+              ],
+              [
+                "Pro Git Book (free)",
+                "https://git-scm.com/book/en/v2"
+              ]
+            ],
+            "tag": "opt"
           }
-        ],
-        "lv": 3,
-        "time": "~10h"
+        ]
       },
       {
-        "t": "Go Pro",
-        "d": "Turn skill into career.",
-        "res": [
-          [
-            "HackerOne",
-            "https://hackerone.com/"
-          ],
-          [
-            "r/netsec",
-            "https://www.reddit.com/r/netsec/"
-          ]
-        ],
+        "t": "Reconnaissance & Enumeration",
+        "d": "Information gathering wins engagements. The more you map the attack surface, the more bugs you find. Be patient and thorough here.",
+        "lv": 2,
+        "children": [
+          {
+            "t": "Open-Source Intelligence",
+            "d": "Learn the target without touching it.",
+            "lv": 1,
+            "time": "~3h",
+            "learn": [
+              "Footprinting: employees, emails, tech stack, leaked creds, all from public data",
+              "Google dorking with site:, inurl:, filetype:, intitle:",
+              "Certificate transparency logs as a subdomain source"
+            ],
+            "do": [
+              "Run `theHarvester -d example.com -b all` and review emails/hosts found",
+              "Search crt.sh for a domain to list its certificates/subdomains",
+              "Build 5 Google dorks targeting exposed files on a practice domain"
+            ],
+            "tools": [
+              "theHarvester",
+              "Google Dorks",
+              "crt.sh",
+              "Maltego"
+            ],
+            "res": [
+              [
+                "crt.sh",
+                "https://crt.sh/"
+              ],
+              [
+                "Google Hacking Database",
+                "https://www.exploit-db.com/google-hacking-database"
+              ],
+              [
+                "OSINT Framework",
+                "https://osintframework.com/"
+              ]
+            ]
+          },
+          {
+            "t": "Subdomain Enumeration",
+            "d": "Find the real, full attack surface.",
+            "lv": 2,
+            "time": "~3h",
+            "tip": "Most beginners test the main domain and stop. The bugs live on forgotten subdomains (dev, staging, old apps). Go wide.",
+            "learn": [
+              "Passive (APIs/CT logs) vs active (brute-force/DNS) enumeration",
+              "Resolving which subdomains are alive and what's running on them",
+              "Chaining: enumerate → resolve → probe HTTP → screenshot"
+            ],
+            "do": [
+              "Run `subfinder -d example.com` then `amass enum -passive -d example.com`",
+              "Resolve and probe live hosts with httpx",
+              "Screenshot all live subdomains to triage interesting ones"
+            ],
+            "tools": [
+              "subfinder",
+              "amass",
+              "assetfinder",
+              "httpx"
+            ],
+            "res": [
+              [
+                "Subfinder",
+                "https://github.com/projectdiscovery/subfinder"
+              ],
+              [
+                "OWASP Amass",
+                "https://github.com/owasp-amass/amass"
+              ],
+              [
+                "Sublist3r",
+                "https://github.com/aboul3la/Sublist3r"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Metadata & Document Analysis",
+            "d": "Public files leak secrets.",
+            "lv": 2,
+            "time": "~1h",
+            "tip": "A company PDF can leak usernames, internal paths and software versions in its metadata. Free intel everyone ignores.",
+            "learn": [
+              "EXIF/metadata in images and documents",
+              "What usernames and software versions in metadata enable",
+              "Automating doc discovery + extraction"
+            ],
+            "do": [
+              "Run `exiftool` on an image and read every field",
+              "Download a public PDF and extract its author/creator metadata",
+              "Note any usernames found, they feed password attacks later"
+            ],
+            "tools": [
+              "exiftool",
+              "FOCA"
+            ],
+            "res": [
+              [
+                "ExifTool",
+                "https://exiftool.org/"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Port & Service Scanning with Nmap",
+            "d": "The single most important recon tool.",
+            "lv": 2,
+            "time": "~5h",
+            "learn": [
+              "Host discovery, TCP SYN scan (-sS), and full port scan (-p-)",
+              "Service/version detection (-sV), OS detection (-O), default scripts (-sC)",
+              "Timing (-T), output formats (-oA), and the Nmap Scripting Engine (NSE)"
+            ],
+            "do": [
+              "Scan a lab box: `nmap -sC -sV -oA scan <ip>` and read every line",
+              "Run a full port scan `nmap -p- <ip>` and compare to the default top-1000",
+              "Use one NSE script, e.g. `nmap --script http-title <ip>`"
+            ],
+            "tools": [
+              "nmap",
+              "masscan",
+              "rustscan"
+            ],
+            "res": [
+              [
+                "Nmap Reference Guide",
+                "https://nmap.org/book/man.html"
+              ],
+              [
+                "TryHackMe: Nmap",
+                "https://tryhackme.com/room/furthernmap"
+              ]
+            ]
+          },
+          {
+            "t": "Service Enumeration (SMB, FTP, HTTP, etc.)",
+            "d": "Dig into every open port you found.",
+            "lv": 2,
+            "time": "~5h",
+            "learn": [
+              "Per-service enumeration: SMB shares, FTP anonymous login, HTTP tech & dirs",
+              "Pulling banners and versions, then mapping to known CVEs",
+              "Turning 'a port is open' into 'here's exactly what's running'"
+            ],
+            "do": [
+              "Enumerate SMB: `enum4linux -a <ip>` and list shares with smbclient",
+              "Check FTP for anonymous login, and grab the HTTP server header",
+              "For every service version, search for a public exploit"
+            ],
+            "tools": [
+              "enum4linux",
+              "smbclient",
+              "whatweb",
+              "searchsploit"
+            ],
+            "res": [
+              [
+                "HackTricks: Pentesting ports",
+                "https://book.hacktricks.xyz/network-services-pentesting/pentesting-network"
+              ]
+            ]
+          },
+          {
+            "t": "Vulnerability Scanning",
+            "d": "Automated discovery, then verify by hand.",
+            "lv": 2,
+            "time": "~2h",
+            "learn": [
+              "What scanners do well (coverage) and badly (false positives)",
+              "Template-based scanning with nuclei",
+              "Always manually confirming a finding before reporting"
+            ],
+            "do": [
+              "Run `nuclei -u https://target` against a lab app",
+              "Pick one finding and reproduce it manually to confirm it's real",
+              "Note false positives you found to build judgment"
+            ],
+            "tools": [
+              "nuclei",
+              "Nessus",
+              "OpenVAS"
+            ],
+            "res": [
+              [
+                "Nuclei",
+                "https://github.com/projectdiscovery/nuclei"
+              ],
+              [
+                "Nessus Essentials (free)",
+                "https://www.tenable.com/products/nessus/nessus-essentials"
+              ]
+            ]
+          },
+          {
+            "t": "Banner Grabbing & Version Mapping",
+            "d": "A tiny detail with huge payoff.",
+            "lv": 1,
+            "time": "~1h",
+            "tip": "An exact version string (e.g. 'vsftpd 2.3.4') often maps directly to a public exploit. Beginners read 'open' and move on; pros read the version.",
+            "learn": [
+              "Grabbing banners manually with netcat/curl",
+              "Mapping version → CVE → public exploit",
+              "Using searchsploit offline"
+            ],
+            "do": [
+              "Grab a banner: `nc <ip> 21` or `curl -I http://<ip>`",
+              "Search the version: `searchsploit vsftpd 2.3.4`",
+              "Record version+CVE pairs in your notes"
+            ],
+            "tools": [
+              "netcat",
+              "curl",
+              "whatweb",
+              "searchsploit"
+            ],
+            "res": [
+              [
+                "Exploit-DB",
+                "https://www.exploit-db.com/"
+              ],
+              [
+                "Shodan",
+                "https://www.shodan.io/"
+              ]
+            ],
+            "tag": "opt"
+          }
+        ]
+      },
+      {
+        "t": "Web Application Security",
+        "d": "The biggest attack surface on earth and the fastest path to bug bounty income. Learn the OWASP Top 10 by exploiting each one in a lab, not just reading about it.",
+        "lv": 2,
+        "children": [
+          {
+            "t": "Master Burp Suite",
+            "d": "Your web-hacking home base.",
+            "lv": 2,
+            "time": "~5h",
+            "learn": [
+              "Proxy: intercept and modify requests between browser and server",
+              "Repeater (replay/tweak requests), Intruder (automate), Decoder, Comparer",
+              "Scoping the target so you only capture relevant traffic"
+            ],
+            "do": [
+              "Install Burp Community, configure the browser proxy + CA cert",
+              "Intercept a login request, send it to Repeater, change a value, resend",
+              "Use Intruder to fuzz a parameter with a small wordlist"
+            ],
+            "tools": [
+              "Burp Suite",
+              "FoxyProxy"
+            ],
+            "res": [
+              [
+                "PortSwigger: Burp docs",
+                "https://portswigger.net/burp/documentation/desktop/getting-started"
+              ]
+            ]
+          },
+          {
+            "t": "Deliberate Practice (PortSwigger Academy)",
+            "d": "Where web skills are actually built.",
+            "lv": 2,
+            "time": "~ongoing",
+            "learn": [
+              "Working labs by vulnerability class until patterns are automatic",
+              "Reading the 'why', not just copying the payload",
+              "Tracking which classes you've mastered"
+            ],
+            "do": [
+              "Create a free PortSwigger account and finish the 'SQL injection' track",
+              "Then do XSS and Access Control tracks",
+              "Log every solved lab in your notes with the key insight"
+            ],
+            "tools": [
+              "PortSwigger Academy",
+              "DVWA"
+            ],
+            "res": [
+              [
+                "PortSwigger Web Security Academy (free)",
+                "https://portswigger.net/web-security"
+              ],
+              [
+                "PayloadsAllTheThings",
+                "https://github.com/swisskyrepo/PayloadsAllTheThings"
+              ],
+              [
+                "OWASP Juice Shop",
+                "https://owasp.org/www-project-juice-shop/"
+              ]
+            ]
+          },
+          {
+            "t": "Content Discovery (Fuzzing)",
+            "d": "Find hidden endpoints & files.",
+            "lv": 2,
+            "time": "~2h",
+            "tip": "The admin panel, backup.zip, or /api/v1 you never see in the UI is found by fuzzing. Skipping this = missing half the attack surface.",
+            "learn": [
+              "Directory/file brute-forcing with good wordlists",
+              "Filtering by status code and response size",
+              "Recursion and extensions (.php, .bak, .zip)"
+            ],
+            "do": [
+              "Run `ffuf -u https://target/FUZZ -w wordlist.txt`",
+              "Filter out noise by size/status and find a hidden path",
+              "Try extension fuzzing for backups (.bak, .old, .zip)"
+            ],
+            "tools": [
+              "ffuf",
+              "gobuster",
+              "feroxbuster",
+              "SecLists"
+            ],
+            "res": [
+              [
+                "SecLists (wordlists)",
+                "https://github.com/danielmiessler/SecLists"
+              ],
+              [
+                "ffuf",
+                "https://github.com/ffuf/ffuf"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "SQL Injection",
+            "d": "Make the database do what you want.",
+            "lv": 2,
+            "time": "~5h",
+            "learn": [
+              "How user input reaches a SQL query unsafely",
+              "Types: error-based, UNION-based, blind boolean, blind time-based",
+              "Reading the DB: extracting tables, columns, credentials"
+            ],
+            "do": [
+              "Solve PortSwigger's SQLi labs by hand before using tools",
+              "Then automate one with `sqlmap -u '...' --batch --dump`",
+              "Document the exact payload and why it worked"
+            ],
+            "tools": [
+              "sqlmap",
+              "Burp Suite"
+            ],
+            "res": [
+              [
+                "PortSwigger: SQL injection",
+                "https://portswigger.net/web-security/sql-injection"
+              ],
+              [
+                "PayloadsAllTheThings",
+                "https://github.com/swisskyrepo/PayloadsAllTheThings"
+              ]
+            ]
+          },
+          {
+            "t": "Cross-Site Scripting (XSS)",
+            "d": "Run your JavaScript in a victim's browser.",
+            "lv": 2,
+            "time": "~4h",
+            "learn": [
+              "Reflected, stored, and DOM-based XSS, and the differences",
+              "Output contexts (HTML, attribute, JS) and how they change the payload",
+              "Real impact: session theft, account takeover, keylogging"
+            ],
+            "do": [
+              "Solve PortSwigger reflected + stored + DOM XSS labs",
+              "Craft a payload that calls `document.cookie`",
+              "Try a context you struggled with until the payload fires"
+            ],
+            "tools": [
+              "Burp Suite"
+            ],
+            "res": [
+              [
+                "PortSwigger: XSS",
+                "https://portswigger.net/web-security/cross-site-scripting"
+              ],
+              [
+                "OWASP XSS Prevention Cheat Sheet",
+                "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+              ]
+            ]
+          },
+          {
+            "t": "Broken Access Control / IDOR",
+            "d": "Change an ID, read someone else's data.",
+            "lv": 1,
+            "time": "~3h",
+            "tip": "IDOR is the easiest high-impact bug-bounty win and beginners overlook it. Always test: can I access object 1235 instead of my 1234?",
+            "learn": [
+              "Horizontal vs vertical privilege escalation",
+              "IDOR: directly referencing another user's object by id/uuid",
+              "Forced browsing to admin-only functions"
+            ],
+            "do": [
+              "Find a request with an id parameter and increment/decrement it",
+              "Try accessing an admin endpoint as a normal user",
+              "Test changing a UUID or swapping it for another account's"
+            ],
+            "tools": [
+              "Burp Suite"
+            ],
+            "res": [
+              [
+                "PortSwigger: Access control",
+                "https://portswigger.net/web-security/access-control"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Authentication & Session Flaws",
+            "d": "Break the login.",
+            "lv": 2,
+            "time": "~4h",
+            "learn": [
+              "Weak password reset, username enumeration, brute-force protection gaps",
+              "Session fixation, predictable tokens, and JWT misconfigurations",
+              "MFA bypass patterns"
+            ],
+            "do": [
+              "Test a login for username enumeration (different error/timing)",
+              "Decode a JWT on jwt.io and test the 'alg:none' / weak-secret issues in a lab",
+              "Attempt a password-reset logic flaw on a practice app"
+            ],
+            "tools": [
+              "Burp Suite",
+              "jwt_tool",
+              "Hydra"
+            ],
+            "res": [
+              [
+                "PortSwigger: Authentication",
+                "https://portswigger.net/web-security/authentication"
+              ],
+              [
+                "PortSwigger: JWT attacks",
+                "https://portswigger.net/web-security/jwt"
+              ]
+            ]
+          },
+          {
+            "t": "SSRF, SSTI, XXE & Injection Cousins",
+            "d": "High-impact server-side classics.",
+            "lv": 3,
+            "time": "~5h",
+            "learn": [
+              "SSRF: make the server request internal/cloud-metadata URLs",
+              "SSTI: template injection leading to RCE",
+              "XXE: abusing XML parsers to read files / SSRF"
+            ],
+            "do": [
+              "Solve PortSwigger SSRF labs (incl. cloud metadata 169.254.169.254)",
+              "Detect SSTI with `{{7*7}}` style probes and escalate in a lab",
+              "Exploit an XXE to read /etc/passwd in a lab"
+            ],
+            "tools": [
+              "Burp Suite"
+            ],
+            "res": [
+              [
+                "PortSwigger: SSRF",
+                "https://portswigger.net/web-security/ssrf"
+              ],
+              [
+                "PortSwigger: XXE",
+                "https://portswigger.net/web-security/xxe"
+              ]
+            ]
+          },
+          {
+            "t": "Security Misconfiguration",
+            "d": "Free wins hiding in plain sight.",
+            "lv": 1,
+            "time": "~2h",
+            "tip": "Default credentials, exposed .git, open S3 buckets, verbose stack traces, unglamorous but they win real bounties constantly.",
+            "learn": [
+              "Default/weak credentials on admin panels and devices",
+              "Exposed sensitive files: .git, .env, backups, directory listing",
+              "Verbose errors and debug modes that leak internals"
+            ],
+            "do": [
+              "Check for /.git/ and try to dump it with git-dumper in a lab",
+              "Test default creds (admin:admin) on a practice admin panel",
+              "Trigger an error and read what the stack trace reveals"
+            ],
+            "tools": [
+              "git-dumper",
+              "nuclei"
+            ],
+            "res": [
+              [
+                "OWASP Top 10",
+                "https://owasp.org/www-project-top-ten/"
+              ],
+              [
+                "OWASP Top 10: Misconfiguration",
+                "https://owasp.org/Top10/A05_2021-Security_Misconfiguration/"
+              ]
+            ],
+            "tag": "opt"
+          }
+        ]
+      },
+      {
+        "t": "Exploitation & Post-Exploitation",
+        "d": "Turn access into impact, responsibly and inside scope. This is where recon and web skills pay off on full machines.",
+        "lv": 3,
+        "children": [
+          {
+            "t": "The Metasploit Framework",
+            "d": "Understand it, don't just click 'exploit'.",
+            "lv": 2,
+            "time": "~4h",
+            "learn": [
+              "Modules: exploits, payloads, auxiliary, post, and how they fit together",
+              "Choosing a payload (staged vs stageless, reverse vs bind)",
+              "Meterpreter basics and what each module actually does to the target"
+            ],
+            "do": [
+              "Exploit a known-vulnerable lab box end-to-end with msfconsole",
+              "Set LHOST/LPORT correctly and catch a meterpreter session",
+              "Read the module source to understand the vulnerability it uses"
+            ],
+            "tools": [
+              "Metasploit",
+              "msfvenom"
+            ],
+            "res": [
+              [
+                "Metasploit Unleashed (free)",
+                "https://www.offsec.com/metasploit-unleashed/"
+              ],
+              [
+                "Metasploit Docs",
+                "https://docs.metasploit.com/"
+              ]
+            ]
+          },
+          {
+            "t": "Shells, Payloads & TTY Upgrade",
+            "d": "Get a shell, then make it usable.",
+            "lv": 2,
+            "time": "~3h",
+            "tip": "Everyone forgets to stabilize the shell, then loses it the moment they hit Ctrl-C. Learn the TTY upgrade trick once and never struggle again.",
+            "learn": [
+              "Bind vs reverse shells and when each works (firewalls/NAT)",
+              "Generating payloads with msfvenom for different targets",
+              "Upgrading a dumb shell to a full interactive TTY"
+            ],
+            "do": [
+              "Catch a reverse shell with `nc -lvnp 4444`",
+              "Stabilize it: `python3 -c 'import pty;pty.spawn(\"/bin/bash\")'` then `stty raw -echo; fg`",
+              "Generate a reverse-shell payload with msfvenom"
+            ],
+            "tools": [
+              "netcat",
+              "socat",
+              "msfvenom"
+            ],
+            "res": [
+              [
+                "PayloadsAllTheThings: Reverse Shell",
+                "https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md"
+              ],
+              [
+                "revshells.com",
+                "https://www.revshells.com/"
+              ]
+            ],
+            "tag": "opt"
+          },
+          {
+            "t": "Password Attacks & Cracking",
+            "d": "Online spraying and offline cracking.",
+            "lv": 2,
+            "time": "~4h",
+            "learn": [
+              "Hash types and how to identify them",
+              "Online (Hydra against a service) vs offline (hashcat/John on a hash file)",
+              "Wordlists, rules, and password spraying vs brute-force (lockouts!)"
+            ],
+            "do": [
+              "Identify a hash with hashid, then crack it: `hashcat -m 0 hash.txt rockyou.txt`",
+              "Crack a Linux hash with John",
+              "Brute one login carefully with Hydra in a lab"
+            ],
+            "tools": [
+              "hashcat",
+              "John the Ripper",
+              "Hydra",
+              "hashid"
+            ],
+            "res": [
+              [
+                "Hashcat wiki",
+                "https://hashcat.net/wiki/"
+              ],
+              [
+                "CrackStation wordlists",
+                "https://crackstation.net/"
+              ],
+              [
+                "Hashcat Example Hashes",
+                "https://hashcat.net/wiki/doku.php?id=example_hashes"
+              ]
+            ]
+          },
+          {
+            "t": "Privilege Escalation (Linux & Windows)",
+            "d": "From user to root/SYSTEM.",
+            "lv": 3,
+            "time": "~8h",
+            "learn": [
+              "Linux: SUID binaries, sudo misconfig, cron jobs, capabilities, kernel exploits",
+              "Windows: unquoted service paths, token privileges, AlwaysInstallElevated",
+              "Running enumeration scripts and reading their output critically"
+            ],
+            "do": [
+              "Run linPEAS on a lab box and chase one highlighted finding to root",
+              "Exploit a sudo or SUID misconfig using GTFOBins",
+              "On Windows, run winPEAS and escalate via a service misconfig"
+            ],
+            "tools": [
+              "linPEAS",
+              "winPEAS",
+              "GTFOBins",
+              "pspy"
+            ],
+            "res": [
+              [
+                "GTFOBins",
+                "https://gtfobins.github.io/"
+              ],
+              [
+                "HackTricks: Linux PrivEsc",
+                "https://book.hacktricks.xyz/linux-hardening/privilege-escalation"
+              ]
+            ]
+          },
+          {
+            "t": "Pivoting & Lateral Movement",
+            "d": "Use one box to reach the rest.",
+            "lv": 3,
+            "time": "~4h",
+            "learn": [
+              "Why internal hosts aren't reachable directly, and what a pivot is",
+              "Port forwarding and SOCKS proxies (chisel, ssh -L/-D, proxychains)",
+              "Lateral movement with reused credentials"
+            ],
+            "do": [
+              "Set up a SOCKS proxy with chisel and route tools through proxychains",
+              "SSH dynamic port-forward (-D) to reach an internal service",
+              "Reach a second box that was invisible before the pivot"
+            ],
+            "tools": [
+              "chisel",
+              "proxychains",
+              "ssh",
+              "sshuttle"
+            ],
+            "res": [
+              [
+                "HackTricks: Tunneling & Pivoting",
+                "https://book.hacktricks.xyz/generic-methodologies-and-resources/tunneling-and-port-forwarding"
+              ],
+              [
+                "Chisel (fast tunnels)",
+                "https://github.com/jpillora/chisel"
+              ]
+            ]
+          },
+          {
+            "t": "Persistence, Cleanup & Loot",
+            "d": "Stay in, then prove it and clean up.",
+            "lv": 3,
+            "time": "~2h",
+            "tip": "A professional documents every change and removes it afterward. Persistence isn't 'cool', untracked changes left on a client's box are how you lose trust (and contracts).",
+            "learn": [
+              "Common persistence (authorized keys, cron, services, scheduled tasks)",
+              "Looting: creds, configs, keys, and pivoting data to gather",
+              "Why you must log and reverse every change you make"
+            ],
+            "do": [
+              "Add and then REMOVE a test persistence mechanism in your lab",
+              "Practice collecting loot into your notes folder systematically",
+              "Write a 'cleanup checklist' you can hand a client"
+            ],
+            "res": [
+              [
+                "MITRE ATT&CK: Persistence",
+                "https://attack.mitre.org/tactics/TA0003/"
+              ]
+            ],
+            "tag": "opt"
+          }
+        ]
+      },
+      {
+        "t": "Specializations (Pick Your Path)",
+        "d": "You don't need all of these, go deep on what excites you: enterprise AD, cloud, APIs, mobile, or DevSecOps. Each is a career on its own.",
+        "lv": 3,
+        "children": [
+          {
+            "t": "Active Directory Attacks",
+            "d": "The enterprise endgame.",
+            "lv": 3,
+            "time": "~12h",
+            "learn": [
+              "AD concepts: domains, OUs, GPOs, Kerberos, NTLM",
+              "Attacks: Kerberoasting, AS-REP roasting, NTLM relay, Pass-the-Hash",
+              "Mapping attack paths with BloodHound"
+            ],
+            "do": [
+              "Build a small AD lab (or use TryHackMe/HTB AD rooms)",
+              "Collect data with BloodHound and find a path to Domain Admin",
+              "Perform a Kerberoast and crack the ticket offline"
+            ],
+            "tools": [
+              "BloodHound",
+              "Impacket",
+              "CrackMapExec",
+              "Rubeus"
+            ],
+            "res": [
+              [
+                "TryHackMe: AD basics",
+                "https://tryhackme.com/room/winadbasics"
+              ],
+              [
+                "HackTricks: AD methodology",
+                "https://book.hacktricks.xyz/windows-hardening/active-directory-methodology"
+              ]
+            ]
+          },
+          {
+            "t": "Cloud Pentesting (AWS/Azure/GCP)",
+            "d": "Where modern infrastructure lives.",
+            "lv": 3,
+            "time": "~8h",
+            "learn": [
+              "IAM, roles, and over-permissioned policies",
+              "Metadata service abuse (via SSRF) and exposed storage buckets",
+              "Cloud-specific enumeration and privilege escalation"
+            ],
+            "do": [
+              "Run flaws.cloud (free AWS hacking challenge) start to finish",
+              "Audit a cloud account with ScoutSuite and read the findings",
+              "Find and read an exposed S3 bucket in a lab/CTF"
+            ],
+            "tools": [
+              "ScoutSuite",
+              "Pacu",
+              "awscli"
+            ],
+            "res": [
+              [
+                "flaws.cloud (free)",
+                "http://flaws.cloud/"
+              ],
+              [
+                "flaws2.cloud",
+                "http://flaws2.cloud/"
+              ],
+              [
+                "HackTricks Cloud",
+                "https://cloud.hacktricks.xyz/"
+              ]
+            ]
+          },
+          {
+            "t": "API Security",
+            "d": "The fastest-growing attack surface.",
+            "lv": 2,
+            "time": "~5h",
+            "learn": [
+              "REST & GraphQL basics and how APIs differ from web pages",
+              "OWASP API Top 10: BOLA (object-level auth), mass assignment, excessive data exposure",
+              "Discovering and fuzzing API endpoints from docs/JS files"
+            ],
+            "do": [
+              "Import an API into Postman and map its endpoints",
+              "Test BOLA by swapping object IDs across accounts",
+              "Probe a GraphQL endpoint with introspection in a lab"
+            ],
+            "tools": [
+              "Postman",
+              "Burp Suite",
+              "ffuf"
+            ],
+            "res": [
+              [
+                "OWASP API Security Top 10",
+                "https://owasp.org/API-Security/editions/2023/en/0x00-header/"
+              ],
+              [
+                "crAPI vulnerable API",
+                "https://github.com/OWASP/crAPI"
+              ]
+            ]
+          },
+          {
+            "t": "Mobile App Security (Android/iOS)",
+            "d": "Apps in your pocket, bugs in their code.",
+            "lv": 3,
+            "time": "~6h",
+            "learn": [
+              "APK structure, static analysis, and decompiling to read code",
+              "Dynamic analysis & traffic interception (bypassing cert pinning)",
+              "Insecure storage, hardcoded secrets, and exported components"
+            ],
+            "do": [
+              "Decompile an APK with jadx and search for secrets/URLs",
+              "Run MobSF on an APK and read its automated report",
+              "Intercept app traffic through Burp on an emulator"
+            ],
+            "tools": [
+              "MobSF",
+              "jadx",
+              "Frida",
+              "Burp Suite"
+            ],
+            "res": [
+              [
+                "OWASP MASTG",
+                "https://mas.owasp.org/MASTG/"
+              ],
+              [
+                "MobSF",
+                "https://github.com/MobSF/Mobile-Security-Framework-MobSF"
+              ]
+            ]
+          },
+          {
+            "t": "DevSecOps & CI/CD Security",
+            "d": "Attack the software supply chain.",
+            "lv": 3,
+            "time": "~4h",
+            "tip": "Secrets committed to git, poisoned pipelines, and vulnerable containers are everywhere, and most pentesters never look. A growing, underserved niche.",
+            "learn": [
+              "Secrets in repos and how to scan for them",
+              "CI/CD pipeline risks (poisoned builds, exposed runners)",
+              "Container & image scanning, and supply-chain basics"
+            ],
+            "do": [
+              "Scan a repo for secrets with trufflehog",
+              "Scan a container image with trivy and read the CVEs",
+              "Review a public CI config for an injectable step"
+            ],
+            "tools": [
+              "trufflehog",
+              "trivy",
+              "gitleaks"
+            ],
+            "res": [
+              [
+                "trufflehog",
+                "https://github.com/trufflesecurity/trufflehog"
+              ],
+              [
+                "Trivy",
+                "https://github.com/aquasecurity/trivy"
+              ],
+              [
+                "OWASP DevSecOps Guideline",
+                "https://owasp.org/www-project-devsecops-guideline/"
+              ]
+            ],
+            "tag": "opt"
+          }
+        ]
+      },
+      {
+        "t": "Bug Bounty, Certs & Career",
+        "d": "Turn skills into reputation, income, and a job. Consistency and good reporting matter more than raw talent here.",
+        "lv": 2,
         "children": [
           {
             "t": "Bug Bounty Hunting",
-            "d": "Get paid to hack, legally. Start with VDPs.",
+            "d": "Get paid for finding real bugs.",
+            "lv": 2,
+            "time": "~ongoing",
+            "learn": [
+              "How platforms work and how to read a program's scope/rules",
+              "Picking a target and a repeatable methodology to hunt it",
+              "Triage, duplicates, and managing your own expectations"
+            ],
+            "do": [
+              "Create HackerOne & Bugcrowd accounts and read 3 program policies",
+              "Pick ONE program with a wide scope and recon it thoroughly",
+              "Read 10 disclosed reports to learn what real bugs look like"
+            ],
+            "tools": [
+              "HackerOne",
+              "Bugcrowd",
+              "Intigriti"
+            ],
             "res": [
               [
-                "HackerOne Hacktivity",
+                "HackerOne Hacktivity (disclosed bugs)",
                 "https://hackerone.com/hacktivity"
               ],
               [
-                "Bugcrowd",
-                "https://www.bugcrowd.com/"
+                "Bugcrowd University",
+                "https://www.bugcrowd.com/hackers/bugcrowd-university/"
               ]
-            ],
-            "children": [
-              {
-                "t": "Platforms & Scope",
-                "d": "HackerOne, Bugcrowd, Intigriti.",
-                "res": [
-                  [
-                    "HackerOne",
-                    "https://hackerone.com/"
-                  ]
-                ],
-                "lv": 3,
-                "time": "~10h"
-              }
-            ],
-            "lv": 3,
-            "time": "~10h"
+            ]
           },
           {
-            "t": "Reports & Writeups",
-            "d": "If you cannot write it, you cannot sell it.",
+            "t": "Writing Great Reports",
+            "d": "The most undervalued skill in the field.",
+            "lv": 2,
+            "time": "~2h",
+            "tip": "A critical bug with a confusing report gets a low bounty (or rejected). A clear report with impact + reproduction steps gets paid fast. This single skill changes your income.",
+            "learn": [
+              "Report anatomy: title, summary, impact, steps to reproduce, PoC, remediation",
+              "Writing for a busy triager, clarity and impact first",
+              "Good screenshots, request/response evidence, and severity (CVSS)"
+            ],
+            "do": [
+              "Take a lab finding and write a full professional report for it",
+              "Score it with a CVSS calculator and justify the rating",
+              "Get feedback or compare against a public disclosed report"
+            ],
+            "tools": [
+              "CVSS Calculator"
+            ],
             "res": [
               [
-                "OWASP Disclosure Sheet",
-                "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"
+                "CVSS Calculator",
+                "https://www.first.org/cvss/calculator/3.1"
               ],
               [
-                "PortSwigger Blog",
-                "https://portswigger.net/research"
+                "How to write a good report",
+                "https://docs.hackerone.com/en/articles/8470531-quality-reports"
+              ],
+              [
+                "OWASP Disclosure Cheat Sheet",
+                "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"
               ]
             ],
-            "lv": 3,
-            "time": "~10h"
+            "tag": "opt"
+          },
+          {
+            "t": "Certifications & Portfolio",
+            "d": "Prove your skills to employers.",
+            "lv": 2,
+            "time": "~varies",
+            "learn": [
+              "Beginner-friendly certs (eJPT, PNPT) vs the respected OSCP",
+              "Building a public portfolio: write-ups, GitHub tools, CTF profiles",
+              "Picking a cert that matches your goal (job vs bounty)"
+            ],
+            "do": [
+              "Start a blog and publish one detailed lab/CTF write-up",
+              "Make a CTF profile (TryHackMe/HTB) and climb a bit",
+              "Pick a first cert target and plan the study path"
+            ],
+            "tools": [
+              "OSCP",
+              "PNPT",
+              "eJPT",
+              "CPTS"
+            ],
+            "res": [
+              [
+                "TCM Security (PNPT/PEH)",
+                "https://academy.tcm-sec.com/"
+              ],
+              [
+                "OffSec OSCP",
+                "https://www.offsec.com/courses/pen-200/"
+              ],
+              [
+                "CompTIA Security+",
+                "https://www.comptia.org/certifications/security"
+              ]
+            ]
+          },
+          {
+            "t": "Community & Never Stop Learning",
+            "d": "The field changes every week.",
+            "lv": 1,
+            "time": "~ongoing",
+            "tip": "The hackers who stay relevant follow researchers, read new disclosures, and keep practicing. Stagnation is the real vulnerability.",
+            "learn": [
+              "Where security news/research lives (Twitter/X, blogs, newsletters)",
+              "Learning from disclosed reports and CTF write-ups",
+              "Giving back: teaching, tooling, and translations"
+            ],
+            "do": [
+              "Follow 10 active security researchers and read weekly",
+              "Subscribe to one newsletter (e.g. tl;dr sec) and one CTF feed",
+              "Contribute one fix/translation to an open-source security project"
+            ],
+            "res": [
+              [
+                "tl;dr sec newsletter",
+                "https://tldrsec.com/"
+              ],
+              [
+                "Awesome Hacking",
+                "https://github.com/Hack-with-Github/Awesome-Hacking"
+              ],
+              [
+                "r/netsec",
+                "https://www.reddit.com/r/netsec/"
+              ]
+            ],
+            "tag": "opt"
           }
-        ],
-        "lv": 3,
-        "time": "~10h"
+        ]
       }
     ],
     "lv": 0
-  }
+  },
+  "kind": "role"
 });

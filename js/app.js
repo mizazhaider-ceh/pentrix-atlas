@@ -865,11 +865,7 @@
 
   // ================= v6: opinion badges =================
   // rec = personal recommendation, alt = alternative path, opt = optional
-  const TAGS = {
-    "cyber-security::Linux Command Line":"rec", "cyber-security::Python":"rec",
-    "cyber-security::Nmap Scanning":"rec", "cyber-security::Burp Suite":"rec",
-    "cyber-security::Wireshark":"opt", "cyber-security::Bash Scripting":"opt",
-    "cyber-security::Metasploit Framework":"alt",
+  const TAGS = { "cyber-security::Bash Scripting":"opt",
     "frontend::CSS":"rec", "frontend::React":"rec", "frontend::TypeScript":"rec",
     "backend::REST APIs":"rec", "backend::SQL Databases":"rec", "backend::Docker Basics":"opt",
     "devops::CI/CD: GitHub Actions":"rec", "devops::Docker":"rec", "devops::Kubernetes":"opt",
@@ -885,7 +881,7 @@
     alt:{ icon:"\u25C8", t:"Alternative path", d:"Another valid way to go." },
     opt:{ icon:"\u25CB", t:"Optional", d:"Skip if you are in a hurry." },
   };
-  function tagFor(rm, n) { return TAGS[rm.id + "::" + n.t] || null; }
+  function tagFor(rm, n) { return n.tag || TAGS[rm.id + "::" + n.t] || null; }
 
   // ================= v6: command palette =================
   let palIndex = [];
