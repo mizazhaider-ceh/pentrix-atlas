@@ -29,7 +29,7 @@
   function roadmapProgress(rm) {
     const p = getProgress();
     const nodes = [];
-    (function walk(n) { nodes.push(n); (n.children || []).forEach(walk); })(rm.root);
+    (function walk(n, d) { if (d >= 2) nodes.push(n); (n.children || []).forEach(k => walk(k, d + 1)); })(rm.root, 0);
     const done = nodes.filter(n => p[rm.id + ":" + n._id] === "done").length;
     const learning = nodes.filter(n => p[rm.id + ":" + n._id] === "learning").length;
     return { done, learning, total: nodes.length, pct: nodes.length ? Math.round(done / nodes.length * 100) : 0 };
@@ -454,7 +454,6 @@
         ${st0 ? `<span class="st-pill st-${st0}">${st0 === "done" ? "\u2713" : (st0 === "learning" ? "\u25D0" : "\u2715")} ${st0}</span>` : ""}
       </div>
       ${n._tag && TAG_META[n._tag] ? `<div class="tag-banner tag-${n._tag}">${TAG_META[n._tag].icon} <b>${TAG_META[n._tag].t}</b><span>${TAG_META[n._tag].d}</span></div>` : ""}
-      ${dep.t ? `<span class="time-badge">\u23F1 ${esc(dep.t)}</span>` : ""}
       <p class="dr-d">${esc(n.d || "")}</p>
       ${tip ? `<div class="tip-box"><b>Heads up</b><span>${esc(tip)}</span></div>` : ""}
       ${tools.length ? `<div class="kids-h">Tools</div><div class="tools">${tools.map(t => `<span class="tool-chip">${esc(t)}</span>`).join("")}</div>` : ""}

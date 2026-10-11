@@ -2,8 +2,8 @@
 ROADMAPS.push({
   "id": "sql",
   "title": "SQL",
-  "icon": "🗄️",
-  "color": "#10b981",
+  "icon": "🗃️",
+  "color": "#14b8a6",
   "desc": "The language every database speaks: query, combine, and analyze data from zero to optimization.",
   "kind": "skill",
   "root": {
